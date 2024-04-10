@@ -1,0 +1,60 @@
+package com.example.crochet3
+
+import android.annotation.SuppressLint
+import androidx.compose.runtime.Composable
+import androidx.navigation.NavController
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.crochet3.viewModels.FavoritesViewModel
+import com.google.mlkit.common.sdkinternal.SharedPrefManager
+
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@Composable
+fun Favorites(navController: NavController, sharedPrefManager: SharedPreferencesRepository) {
+    val viewModel: FavoritesViewModel = viewModel(factory = FavoritesViewModelFactory(sharedPrefManager))
+    Scaffold(
+        topBar = { TopAppBar(navController, "Favorites")},
+        bottomBar = { BottomBar(navController) },
+        containerColor = Color.Transparent,
+        modifier = Modifier.background(appGradient()))
+    {
+        Column(modifier = Modifier.padding(top = 100.dp))
+        {
+            WhiteCard {
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(2),
+                    modifier = Modifier
+                        .padding(start = 10.dp, top = 20.dp, end = 10.dp, bottom = 80.dp)
+                ) {
+                    items(viewModel.favoritePatterns) { pattern ->
+                        PatternCard(pattern, navController)
+                    }
+                }
+                Spacer(modifier = Modifier.height(80.dp))
+            }
+        }
+    }
+}
+
+class FavoritesViewModelFactory(private val sharedPrefManager: SharedPreferencesRepository) : ViewModelProvider.Factory {
+     fun <T : ViewModel?> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(FavoritesViewModel::class.java)) {
+            return FavoritesViewModel(sharedPrefManager) as T
+        }
+        throw IllegalArgumentException("Unknown ViewModel class")
+    }
+}
