@@ -69,25 +69,24 @@ import com.example.crochet3.ui.theme.Typography
 import kotlinx.coroutines.launch
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Card
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.rememberNavController
 
 
 @OptIn(ExperimentalFoundationApi::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun PatternPage(navController: NavController, patternName: String, sharedPrefManager: SharedPreferencesRepository) {
+fun PatternPage(navController: NavController, patternName: String) {
     val scope = rememberCoroutineScope()
     val selectedImage = remember { mutableStateOf<Int?>(null) }
     val openLinkLauncher =
         rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) { result ->
         }
-    val isFavorite = remember { mutableStateOf(sharedPrefManager.isFavorite(patternName)) }
     val onFavoriteClick: (Boolean) -> Unit = { isFavorite ->
-        if (isFavorite) {
-            sharedPrefManager.addFavorite(patternName)
-        } else {
-            sharedPrefManager.removeFavorite(patternName)
-        }
+        if (isFavorite) { }
+        else { }
     }
+    val isFavorite = remember { mutableStateOf(false) }
     val pattern = crochetPatterns.first { it.name == patternName }
     val patternImages = listOf(pattern.imageResId, pattern.image2, pattern.image3)
     val pagerState = rememberPagerState(pageCount = { 3 })
@@ -158,9 +157,9 @@ fun PatternPage(navController: NavController, patternName: String, sharedPrefMan
                         )
                         {
                             Icon(
-                                imageVector = if (isFavorite.value as Boolean) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
-                                contentDescription = if (isFavorite.value as Boolean) "Filled Favorite Icon" else "Empty Favorite Icon",
-                                tint = if (isFavorite.value as Boolean) Color.Red else Color.Gray,
+                                imageVector = if (isFavorite.value) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
+                                contentDescription = if (isFavorite.value) "Filled Favorite Icon" else "Empty Favorite Icon",
+                                tint = if (isFavorite.value) Color.Red else Color.Gray,
                                 modifier = Modifier
                                     .size(24.dp)
                             )
@@ -459,3 +458,9 @@ fun PatternPage(navController: NavController, patternName: String, sharedPrefMan
 
 
 
+@Preview
+@Composable
+fun PatternPagePreview() {
+    val navController = rememberNavController()
+    PatternPage(navController, "Hats")
+}

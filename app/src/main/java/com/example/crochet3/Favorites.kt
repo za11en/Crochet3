@@ -15,17 +15,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.material3.Scaffold
-import androidx.compose.runtime.livedata.observeAsState
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.crochet3.viewModels.FavoritesViewModel
-import com.google.mlkit.common.sdkinternal.SharedPrefManager
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.rememberNavController
+
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun Favorites(navController: NavController, sharedPrefManager: SharedPreferencesRepository) {
-    val viewModel: FavoritesViewModel = viewModel(factory = FavoritesViewModelFactory(sharedPrefManager))
+fun Favorites(navController: NavController){
     Scaffold(
         topBar = { TopAppBar(navController, "Favorites")},
         bottomBar = { BottomBar(navController) },
@@ -40,7 +36,7 @@ fun Favorites(navController: NavController, sharedPrefManager: SharedPreferences
                     modifier = Modifier
                         .padding(start = 10.dp, top = 20.dp, end = 10.dp, bottom = 80.dp)
                 ) {
-                    items(viewModel.favoritePatterns) { pattern ->
+                    items(crochetPatterns) { pattern ->
                         PatternCard(pattern, navController)
                     }
                 }
@@ -49,12 +45,9 @@ fun Favorites(navController: NavController, sharedPrefManager: SharedPreferences
         }
     }
 }
-
-class FavoritesViewModelFactory(private val sharedPrefManager: SharedPreferencesRepository) : ViewModelProvider.Factory {
-     fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(FavoritesViewModel::class.java)) {
-            return FavoritesViewModel(sharedPrefManager) as T
-        }
-        throw IllegalArgumentException("Unknown ViewModel class")
-    }
+@Preview
+@Composable
+fun FavoritesPreview(){
+    val navController = rememberNavController()
+    Favorites(navController)
 }

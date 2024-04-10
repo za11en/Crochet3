@@ -8,8 +8,6 @@ import androidx.navigation.compose.rememberNavController
 
 @Composable
 fun AppNavHost() {
-    val context = LocalContext.current
-    val sharedPrefManager = SharedPreferencesRepository(context)
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = Screens.MAINACTIVITY.route) {
         composable(Screens.MAINACTIVITY.route) { MainScreen(navController) }
@@ -18,7 +16,7 @@ fun AppNavHost() {
             val title = backStackEntry.arguments?.getString("title") // Retrieve the title argument
             SubscreensCategories(navController, title ?: "") // Pass the title to the SubscreenCategories composable
         }
-        composable(Screens.FAVORITES.route) { Favorites(navController, sharedPrefManager) }
+        composable(Screens.FAVORITES.route) { Favorites(navController) }
         composable("searchPage/{searchText}") { backStackEntry ->
             val searchText = backStackEntry.arguments?.getString("searchText")
             SearchPage(navController, searchText ?: "")
@@ -36,7 +34,7 @@ fun AppNavHost() {
         composable(Screens.MISCELLANEOUS.route) { Miscellaneous() }
         composable("patternPage/{patternName}") { backStackEntry ->
             val patternName = backStackEntry.arguments?.getString("patternName")
-            PatternPage(navController, patternName ?: "", sharedPrefManager)
+            PatternPage(navController, patternName ?: "")
         }
         composable(Screens.TOOLS.route) { Tools(navController) }
         composable(Screens.APPINFO.route) { AppInfo(navController) }
