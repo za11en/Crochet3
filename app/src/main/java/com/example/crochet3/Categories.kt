@@ -33,11 +33,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.crochet3.ui.theme.AppPrime
-
-//the card layout of the categories items
-
-
-
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.crochet3.viewModels.CategoryViewModel
@@ -47,7 +42,6 @@ import com.example.crochet3.viewModels.CategoryViewModel
 fun CategoriesScreen(navController: NavController) {
     val viewModel: CategoryViewModel = viewModel()
     val categories = viewModel.getCategories().observeAsState(initial = emptyList())
-
     Scaffold(
         topBar = {TopAppBar(navController, "Categories")},
         bottomBar = { BottomBar(navController) },
@@ -93,15 +87,13 @@ fun CategoryCard(title: String, navController: NavController, destination: Strin
                 modifier = Modifier
                     .fillMaxSize()
                     .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp, bottomEnd = 0.dp, bottomStart = 0.dp))
-                    .weight(1f)
-            )
-        }
+                    .weight(1f)) }
         Text(
             textAlign = TextAlign.Center,
             text = title,
             color = AppPrime,
             fontSize = 22.sp,
-            fontWeight = FontWeight.Bold,
+            fontWeight = FontWeight.Bold
         )
     }
 }

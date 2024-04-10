@@ -38,16 +38,13 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -61,189 +58,103 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import com.example.crochet3.ui.theme.AppPrime
 import androidx.compose.ui.text.input.ImeAction
-import com.example.crochet3.ui.theme.Typography
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.crochet3.viewModels.SearchViewModel
+
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun SearchPage(navController: NavController, initialSearchText: String) {
-    val searchText = remember { mutableStateOf(initialSearchText) }
-    val patterns = crochetPatterns.filter { it.name.contains(searchText.value, ignoreCase = true) }
+fun SearchPage(navController: NavController,initialSearchText: String, searchViewModel: SearchViewModel = viewModel()) {
+    val isFocused by searchViewModel.isFocused.observeAsState(initial = false)
+    val searchText by searchViewModel.searchText.observeAsState(initial = "")
+    val patterns by searchViewModel.searchResults.observeAsState(initial = emptyList())
     Scaffold(
-        topBar = {TopAppBar(navController, "Search") },
+        topBar = { TopAppBar(navController, "Search") },
         bottomBar = { BottomBar(navController) },
         containerColor = Color.Transparent,
         modifier = Modifier.background(appGradient())
     ) {
-            Column (modifier=Modifier.padding(top = 100.dp)){
-                Surface(color = Color.White, shape = RoundedCornerShape(10.dp),
+        Column(modifier = Modifier.padding(top = 100.dp)) {
+            Surface(
+                color = Color.White, shape = RoundedCornerShape(10.dp),
+                modifier = Modifier
+                    .padding(start = 16.dp, end = 16.dp)
+            ) {
+                SearchBar(searchText, isFocused, searchViewModel, navController)
+            }
+            Spacer(modifier = Modifier.height(32.dp))
+            WhiteCard {
+                Column(
                     modifier = Modifier
-                        .padding(start = 16.dp, end = 16.dp)) {
-                    val isFocused = remember { mutableStateOf(false) }
-                    Box(modifier = Modifier.fillMaxWidth()) {
-                        IconButton(onClick = {
-                            if (searchText.value.isNotEmpty()) {
-                                navController.navigate("searchPage/${searchText.value}")
-                            }
-                        }, modifier = Modifier.align(Alignment.CenterStart)) {
-                            Icon(
-                                imageVector = Icons.Filled.Search,
-                                contentDescription = "Search Icon",
-                                tint = Color.Gray,
-                                modifier = Modifier.size(32.dp)
-                            )
-                        }
-                        BasicTextField(
-                            value = searchText.value,
-                            onValueChange = { searchText.value = it },
-                            cursorBrush = SolidColor(Color.Black),
-                            textStyle = TextStyle(color = Color.Black, fontSize = 24.sp),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(50.dp)
-                                .padding(start = 50.dp, top = 10.dp, bottom = 10.dp, end = 50.dp)
-                                .clip(RoundedCornerShape(10.dp))
-                                .onFocusChanged { focusState ->
-                                    isFocused.value = focusState.isFocused
-                                },
-                            singleLine = true,
-                            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-                            keyboardActions = KeyboardActions(onSearch = {
-                                if (searchText.value.isNotEmpty()) {
-                                    navController.navigate("searchPage/${searchText.value}")
-                                }
-                            })
-                        )
-                        if (searchText.value.isEmpty() && !isFocused.value) {
-                            Text(
-                                text = "Search Patterns",
-                                color = Color.Gray,
-                                fontSize = 20.sp,
-                                fontWeight = FontWeight.Normal,
-                                modifier = Modifier
-                                    .padding(start = 50.dp)
-                                    .align(Alignment.CenterStart)
-                            )
-                        }
-                        if (!isFocused.value) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.voice),
-                                contentDescription = "voice search",
-                                tint = Color.Gray,
-                                modifier = Modifier
-                                    .align(Alignment.CenterEnd)
-                                    .size(42.dp)
-                                    .padding(end = 10.dp)
-                                    .clickable { /*TODO*/ }
-                            )
-                        }
-                        if (searchText.value.isEmpty() && isFocused.value) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.voice),
-                                contentDescription = "voice search",
-                                tint = Color.Gray,
-                                modifier = Modifier
-                                    .align(Alignment.CenterEnd)
-                                    .size(42.dp)
-                                    .padding(end = 10.dp)
-                                    .clickable { /*TODO*/ }
-                            )
-                        }
-                        if (searchText.value.isNotEmpty() && isFocused.value) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.clear),
-                                contentDescription = "clear search",
-                                tint = Color.Gray,
-                                modifier = Modifier
-                                    .align(Alignment.CenterEnd)
-                                    .size(42.dp)
-                                    .padding(end = 10.dp)
-                                    .clickable { searchText.value = "" }
-                            )
-                        }
-                    }
-                }
-                Spacer(modifier = Modifier.height(32.dp))
-                WhiteCard {
-                    Column(
+                        .padding(start = 10.dp, end = 10.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Row(
                         modifier = Modifier
-                            .padding(start = 10.dp, end = 10.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
+                            .padding(start = 6.dp, end = 6.dp)
+                            .fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Row(
+                        Text(
+                            text = "Search Results For: $searchText",
+                            lineHeight = 16.sp,
+                            color = AppPrime,
+                            fontWeight = FontWeight.ExtraBold,
+                            textAlign = androidx.compose.ui.text.style.TextAlign.Left,
+                            fontSize = 14.sp,
                             modifier = Modifier
-                                .padding(start = 6.dp, end = 6.dp)
-                                .fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Text(
-                                text = "Search Results For: ${searchText.value}",
-                                lineHeight = 16.sp,
-                                color = AppPrime,
-                                fontWeight = FontWeight.ExtraBold,
-                                textAlign = androidx.compose.ui.text.style.TextAlign.Left,
-                                fontSize = 14.sp,
+                                .padding(top = 20.dp, start = 0.dp, bottom = 20.dp, end = 0.dp)
+                                .weight(.7f)
+                        )
+                        FilterMenu(searchViewModel)
+                        Spacer(modifier = Modifier.width(8.dp))
+                        SortMenu(searchViewModel)
+                    }
+                    LazyVerticalGrid(
+                        columns = GridCells.Fixed(2), modifier = Modifier.padding(bottom = 80.dp)
+                    ) {
+                        items(patterns) { pattern ->
+                            Card(
                                 modifier = Modifier
-                                    .padding(top = 20.dp, start = 0.dp, bottom = 20.dp, end = 0.dp)
-                                    .weight(.7f)
-                            )
-                            FilterMenu()
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Icon(
-                                painter = painterResource(id = R.drawable.sort),
-                                contentDescription = "sort",
-                                tint = Color.DarkGray,
-                                modifier = Modifier
-                                    .size(36.dp)
-                                    .padding(top = 0.dp, start = 0.dp, bottom = 0.dp, end = 0.dp)
-                                    .clickable { /*TODO*/ }
-                            )
-                        }
-                        LazyVerticalGrid(
-                            columns = GridCells.Fixed(2), modifier = Modifier.padding(bottom = 80.dp)
-                        ) {
-                            items(patterns) { pattern ->
-                                Card(
+                                    .fillMaxWidth()
+                                    .padding(6.dp)
+                                    .height(175.dp)
+                                    .width(175.dp)
+                                    .border(6.dp, Color(0xFFFFFFFF), RoundedCornerShape(16.dp))
+                                    .shadow(4.dp, shape = RoundedCornerShape(16.dp))
+                                    .clickable { navController.navigate("patternPage/${pattern.name}") },
+                                shape = RoundedCornerShape(16.dp)
+                            ) {
+                                Column(
                                     modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(6.dp)
-                                        .height(175.dp)
-                                        .width(175.dp)
-                                        .border(6.dp, Color(0xFFFFFFFF), RoundedCornerShape(16.dp))
-                                        .shadow(4.dp, shape = RoundedCornerShape(16.dp))
-                                        .clickable { navController.navigate("patternPage/${pattern.name}") },
-                                    shape = RoundedCornerShape(16.dp)
-                                ) {
-                                    Column(
-                                        modifier = Modifier
-                                            .background(Color.White)
-                                            .clip(
-                                                RoundedCornerShape(
-                                                    topStart = 10.dp,
-                                                    topEnd = 10.dp,
-                                                    bottomEnd = 0.dp,
-                                                    bottomStart = 0.dp
-                                                )
+                                        .background(Color.White)
+                                        .clip(
+                                            RoundedCornerShape(
+                                                topStart = 10.dp,
+                                                topEnd = 10.dp,
+                                                bottomEnd = 0.dp,
+                                                bottomStart = 0.dp
                                             )
-                                    ) {
-                                        Image(
-                                            painter = painterResource(id = pattern.imageResId),
-                                            contentDescription = "Image for ${pattern.name}",
-                                            contentScale = ContentScale.Crop,
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .height(135.dp)
                                         )
-                                        Text(
-                                            text = pattern.name,
-                                            fontSize = 14.sp,
-                                            fontWeight = FontWeight.SemiBold,
-                                            color = Color.Black,
-                                            modifier = Modifier
-                                                .align(Alignment.CenterHorizontally)
-                                                .padding(top = 8.dp, bottom = 8.dp),
-                                        )
-                                    }
+                                ) {
+                                    Image(
+                                        painter = painterResource(id = pattern.imageResId),
+                                        contentDescription = "Image for ${pattern.name}",
+                                        contentScale = ContentScale.Crop,
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .height(135.dp)
+                                    )
+                                    Text(
+                                        text = pattern.name,
+                                        fontSize = 14.sp,
+                                        fontWeight = FontWeight.SemiBold,
+                                        color = Color.Black,
+                                        modifier = Modifier
+                                            .align(Alignment.CenterHorizontally)
+                                            .padding(top = 8.dp, bottom = 8.dp),
+                                    )
                                 }
                             }
                         }
@@ -253,21 +164,141 @@ fun SearchPage(navController: NavController, initialSearchText: String) {
         }
     }
 
+}
+@Composable
+fun SearchBar(
+        searchText: String,
+        isFocused: Boolean,
+        searchViewModel: SearchViewModel,
+        navController: NavController)
+{
+    Box(modifier = Modifier.fillMaxWidth()) {
+        IconButton(onClick = {
+            if (searchText.isNotEmpty()) {
+                navController.navigate("searchPage/$searchText")
+            } }, modifier = Modifier.align(Alignment.CenterStart)) {
+                Icon(
+                    imageVector = Icons.Filled.Search,
+                    contentDescription = "Search Icon",
+                    tint = Color.Gray,
+                    modifier = Modifier.size(32.dp)
+                )
+            }
+            BasicTextField(
+                value = searchText,
+                onValueChange = { searchViewModel.setSearchText(it) },
+                cursorBrush = SolidColor(Color.Black),
+                textStyle = TextStyle(color = Color.Black, fontSize = 24.sp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp)
+                    .padding(start = 50.dp, top = 10.dp, bottom = 10.dp, end = 50.dp)
+                    .clip(RoundedCornerShape(10.dp))
+                    .onFocusChanged { focusState ->
+                        searchViewModel.setFocusedState(focusState.isFocused)
+                    },
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+                keyboardActions = KeyboardActions(onSearch = {
+                    if (searchText.isNotEmpty()) {
+                        navController.navigate("searchPage/${searchText}")
+                    }
+                })
+            )
+            if (searchText.isEmpty() && !isFocused) {
+                Text(
+                    text = "Search Patterns",
+                    color = Color.Gray,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Normal,
+                    modifier = Modifier
+                        .padding(start = 50.dp)
+                        .align(Alignment.CenterStart))
+            }
+            if (!isFocused) {
+                Icon(
+                    painter = painterResource(id = R.drawable.voice),
+                    contentDescription = "voice search",
+                    tint = Color.Gray,
+                    modifier = Modifier
+                        .align(Alignment.CenterEnd)
+                        .size(42.dp)
+                        .padding(end = 10.dp)
+                        .clickable { /*TODO*/ })
+            }
+            if (searchText.isEmpty() && isFocused) {
+                Icon(
+                    painter = painterResource(id = R.drawable.voice),
+                    contentDescription = "voice search",
+                    tint = Color.Gray,
+                    modifier = Modifier
+                        .align(Alignment.CenterEnd)
+                        .size(42.dp)
+                        .padding(end = 10.dp)
+                        .clickable { /*TODO*/ }
+                )
+            }
+            if (searchText.isNotEmpty() && isFocused) {
+                Icon(
+                    painter = painterResource(id = R.drawable.clear),
+                    contentDescription = "clear search",
+                    tint = Color.Gray,
+                    modifier = Modifier
+                        .align(Alignment.CenterEnd)
+                        .size(42.dp)
+                        .padding(end = 10.dp)
+                        .clickable { searchViewModel.setSearchText("") }
+                )
+            }
+        }
+    }
 
-
-
+@Composable
+fun SortMenu(searchViewModel: SearchViewModel = viewModel()) {
+    var expanded by remember { mutableStateOf(false) }
+    val isSortMenuExpanded by searchViewModel.isSortMenuExpanded.observeAsState(initial = false)
+    expanded = isSortMenuExpanded
+    val screenWidth = LocalConfiguration.current.screenWidthDp.dp
+    val items = searchViewModel.sortItems
+    val checkedItems = searchViewModel.checkedSortItems
+    items.forEach { label -> checkedItems[label] = false }
+    Box(modifier = Modifier.wrapContentSize(Alignment.TopStart))
+    {
+        Icon(
+            painter = painterResource(id = R.drawable.sort),
+            contentDescription = "sort",
+            tint = Color.DarkGray,
+            modifier = Modifier
+                .size(36.dp)
+                .padding(top = 0.dp, start = 0.dp, bottom = 0.dp, end = 0.dp)
+                .clickable { searchViewModel.setSortMenuExpandedState(!expanded) })
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = {
+                expanded = false
+                searchViewModel.setSortMenuExpandedState(false) },
+            modifier = Modifier
+                .background(Color.White)
+                .width(screenWidth / 2)
+        ) {
+            Text(text = "Filter by:") }
+    }
+}
 
 
 @Composable
-fun FilterMenu() {
+fun FilterMenu(searchViewModel: SearchViewModel = viewModel()) {
     var expanded by remember { mutableStateOf(false) }
+    val isFilterMenuExpanded by searchViewModel.isFilterMenuExpanded.observeAsState(initial = false)
+    expanded = isFilterMenuExpanded
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
-    val items = listOf("Easy", "Intermediate", "Advanced", "Expert")
-    val checkedItems = remember { mutableStateMapOf<String, Boolean>() }
+    val items = searchViewModel.filterItems
+    val checkedItems = searchViewModel.checkedFilterItems
     items.forEach { label ->
         checkedItems[label] = false
     }
-    Box(modifier = Modifier.wrapContentSize(Alignment.TopStart)) {
+    Box(modifier = Modifier.wrapContentSize(Alignment.TopStart))
+    {
         Icon(
             painter = painterResource(id = R.drawable.filter_alt),
             contentDescription = "filter",
@@ -275,86 +306,21 @@ fun FilterMenu() {
             modifier = Modifier
                 .size(36.dp)
                 .padding(top = 0.dp, start = 0.dp, bottom = 0.dp, end = 0.dp)
-                .clickable { expanded = true }
-        )
-
+                .clickable { searchViewModel.setFilterMenuExpandedState(!expanded) })
         DropdownMenu(
             expanded = expanded,
-            onDismissRequest = { expanded = false },
+            onDismissRequest = {
+                expanded = false
+                searchViewModel.setFilterMenuExpandedState(false) },
             modifier = Modifier
                 .background(Color.White)
                 .width(screenWidth / 2)
         ) {
-            Text(
-                text = "Filter Search Results:",
-                style = Typography.bodyMedium,
-                color = Color.Black,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 8.dp)
-            )
-            HorizontalDivider(
-                color = Color.LightGray,
-                thickness = 1.dp,
-                modifier = Modifier.padding(start = 16.dp, end = 16.dp)
-            )
-            Text(
-                text = "Difficulty",
-                style = Typography.bodyMedium,
-                color = Color.Black,
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Medium,
-                modifier = Modifier.padding(start = 16.dp, top = 8.dp)
-            )
-            items.forEach { label ->
-                Row(
-                    Modifier
-                        .height(32.dp)
-                        .fillMaxWidth()
-                        .padding(start = 16.dp)
-                        .clickable { checkedItems[label] = checkedItems[label]?.not() ?: false },
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Checkbox(
-                        checked = checkedItems[label] ?: false,
-                        onCheckedChange = { checkedItems[label] = it }
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = label,
-                        style = Typography.bodyMedium,
-                        color = Color.Black,
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Normal
-                    )
-                }
-            }
-            Text(
-                text = "Hook Size",
-                style = Typography.bodyMedium,
-                color = Color.Black,
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Medium,
-                modifier = Modifier.padding(start = 16.dp, top = 8.dp)
-            )
-            Slider(
-                value = 0.5f,
-                onValueChange = { /*TODO*/ },
-                valueRange = 0f..1f,
-                steps = 16,
-                modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 8.dp)
-            )
-            Text(
-                text = "Apply",
-                style = Typography.bodyMedium,
-                color = AppPrime,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 8.dp)
-            )
+            Text(text = "Filter by:") }
         }
     }
-    }
+
+
 
 @Preview(showBackground = true)
 @Composable
@@ -363,4 +329,5 @@ fun PreviewSearchPage() {
         SearchPage(navController = rememberNavController(), initialSearchText = "")
     }
 }
+
 

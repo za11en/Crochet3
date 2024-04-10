@@ -21,7 +21,7 @@ import androidx.navigation.compose.rememberNavController
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun Favorites(navController: NavController){
+fun Favorites(navController: NavController ){
     Scaffold(
         topBar = { TopAppBar(navController, "Favorites")},
         bottomBar = { BottomBar(navController) },
