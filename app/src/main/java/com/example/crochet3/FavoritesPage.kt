@@ -16,12 +16,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
+import com.example.crochet3.viewModels.MainViewModel
+
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun Favorites(navController: NavController ){
+fun Favorites(navController: NavController, mainViewModel: MainViewModel= viewModel()){
     Scaffold(
         topBar = { TopAppBar(navController, "Favorites")},
         bottomBar = { BottomBar(navController) },

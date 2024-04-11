@@ -3,6 +3,7 @@ package com.example.crochet3
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -42,6 +43,7 @@ fun SubscreensCategories(navController: NavController, title: String) {
                         PatternCard(pattern, navController)
                     }
                 }
+                Spacer(modifier = Modifier.padding(40.dp))
             }
         }
     }

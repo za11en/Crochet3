@@ -400,8 +400,8 @@ fun PatternCard(pattern:  CrochetPattern, navController: NavController) {
             }
         }
         Row( modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 18.dp, end = 18.dp),verticalAlignment = Alignment.Top, horizontalArrangement = Arrangement.End) {
+            .fillMaxWidth(.85f)
+            .padding(top = 18.dp, end = 0.dp),verticalAlignment = Alignment.Top, horizontalArrangement = Arrangement.End) {
             FloatingActionButton(
                 onClick = { isFavorite.value = !isFavorite.value},
                 modifier = Modifier
