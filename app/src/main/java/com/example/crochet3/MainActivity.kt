@@ -45,6 +45,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.crochet3.ui.theme.Crochet3Theme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.SolidColor
@@ -52,6 +54,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.crochet3.ui.theme.AppPrime
@@ -60,6 +63,7 @@ import com.example.crochet3.ui.theme.AppPrimeThird
 import com.example.crochet3.ui.theme.Typography
 import com.example.crochet3.ui.theme.Poppins
 import com.example.crochet3.ui.theme.TitleTiny
+import com.example.crochet3.viewModels.MainViewModel
 
 
 class MainActivity : ComponentActivity() {
@@ -67,6 +71,10 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             Crochet3Theme {
+                val viewModel = viewModel<MainViewModel>()
+                val searchText by viewModel.searchText.collectAsState()
+                val patterns by viewModel.patterns.collectAsState()
+                val isSearching by viewModel.isSearching.collectAsState()
                 AppNavHost()// Create NavHost
             }
         }
@@ -121,8 +129,9 @@ fun MainContent(navController: NavController) {
                 Icon (
                     painter = painterResource(id = R.drawable.help_outline), contentDescription = "help icon",
                     tint = AppPrimeThird,
-                    modifier = Modifier.size(32.dp)
-                        .padding(top=2.dp)
+                    modifier = Modifier
+                        .size(32.dp)
+                        .padding(top = 2.dp)
                         .clickable { navController.navigate("appinfo") }
                 )
             }
@@ -181,7 +190,8 @@ fun MainContent(navController: NavController) {
                             painter = painterResource(id = R.drawable.voice),
                             contentDescription = "voice search",
                             tint = Color.Gray,
-                            modifier = Modifier.align(Alignment.CenterEnd)
+                            modifier = Modifier
+                                .align(Alignment.CenterEnd)
                                 .size(42.dp)
                                 .padding(end = 10.dp)
                                 .clickable { /*TODO*/ }
@@ -192,7 +202,8 @@ fun MainContent(navController: NavController) {
                             painter = painterResource(id = R.drawable.voice),
                             contentDescription = "voice search",
                             tint = Color.Gray,
-                            modifier = Modifier.align(Alignment.CenterEnd)
+                            modifier = Modifier
+                                .align(Alignment.CenterEnd)
                                 .size(42.dp)
                                 .padding(end = 10.dp)
                                 .clickable { /*TODO*/ }
@@ -203,7 +214,8 @@ fun MainContent(navController: NavController) {
                             painter = painterResource(id = R.drawable.clear),
                             contentDescription = "clear search",
                             tint = Color.Gray,
-                            modifier = Modifier.align(Alignment.CenterEnd)
+                            modifier = Modifier
+                                .align(Alignment.CenterEnd)
                                 .size(42.dp)
                                 .padding(end = 10.dp)
                                 .clickable { searchText.value = "" }
@@ -315,7 +327,14 @@ fun PatternCard(pattern:  CrochetPattern, navController: NavController) {
         Image(painter = painterResource(id = pattern.imageResId), contentDescription = "Crochet Image", contentScale = ContentScale.Crop,
             modifier = Modifier
                 .fillMaxSize()
-                .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp, bottomEnd = 0.dp, bottomStart = 0.dp))
+                .clip(
+                    RoundedCornerShape(
+                        topStart = 16.dp,
+                        topEnd = 16.dp,
+                        bottomEnd = 0.dp,
+                        bottomStart = 0.dp
+                    )
+                )
                 .weight(1f))
         Row {
             Column(

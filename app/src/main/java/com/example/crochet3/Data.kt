@@ -38,7 +38,19 @@ data class CrochetPattern(
     val timeToComplete: String,
     val materials: String,
     val instructions: String
-)
+) {
+    fun doesMatchSearchQuery(query:String): Boolean {
+        val matchingCombinations = listOf(
+            "$name",
+            "$category",
+            "$creatorname",
+
+        )
+        return matchingCombinations.any {
+            it.contains(query, ignoreCase = true)
+        }
+    }
+}
 
 enum class Difficulty {
     BEGINNER,
