@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -24,7 +23,6 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
@@ -54,7 +52,6 @@ import com.example.crochet3.ui.theme.Crochet3Theme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.SolidColor
@@ -62,7 +59,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
@@ -85,13 +81,12 @@ class MainActivity : ComponentActivity() {
                 val patterns by viewModel.patterns.collectAsState()
                 val isSearching by viewModel.isSearching.collectAsState()
                 val isFavorite by viewModel.isFavorite.collectAsState()
-                AppNavHost()// Create NavHost
+                AppNavHost()
             }
         }
     }
 }
 
-//constructs the layout of the main screen with the bottom bar
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun MainScreen(navController: NavController) {
@@ -149,7 +144,6 @@ fun MainContent(navController: NavController) {
                         .clickable { navController.navigate("appinfo") }
                 )
             }
-
             Surface(
                 color = Color(0xFFFFFFFF), shape = RoundedCornerShape(10.dp),
                 modifier = Modifier
@@ -360,7 +354,7 @@ fun MainContent(navController: NavController) {
 @Composable
 fun PatternCard(pattern:  CrochetPattern, navController: NavController) {
     val isFavorite = remember { mutableStateOf(false) }
-    Box() {
+    Box {
         Card(modifier = Modifier
             .padding(6.dp)
             .border(6.dp, Color.White, RoundedCornerShape(16.dp))

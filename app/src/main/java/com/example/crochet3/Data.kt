@@ -43,9 +43,9 @@ data class CrochetPattern(
 ) {
     fun doesMatchSearchQuery(query:String): Boolean {
         val matchingCombinations = listOf(
-            "$name",
+            name,
             "$category",
-            "$creatorname",
+            creatorname,
 
         )
         return matchingCombinations.any {

@@ -11,8 +11,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
@@ -49,7 +50,11 @@ fun Tools(navController: NavController, toolsViewModel: ToolsViewModel = viewMod
     ) {
         Column(modifier = Modifier.padding(top = 100.dp)) {
             WhiteCard {
-                LazyColumn {
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(1),
+                    modifier = Modifier.
+                    padding(start = 10.dp, top = 20.dp, end = 10.dp)
+                ){
                     items(toolsViewModel.toolNames) { toolName ->
                         ToolCard(toolName) {
                             toolsViewModel.navigateToTool(navController, toolName)
@@ -66,7 +71,7 @@ fun ToolCard(toolName: String, onClick: () -> Unit) {
     Card(
         modifier = Modifier
             .clickable(onClick = onClick)
-            .padding(top = 24.dp, start= 16.dp, end = 16.dp)
+            .padding(top = 8.dp, start= 16.dp, bottom = 16.dp, end = 16.dp)
             .shadow(4.dp, RoundedCornerShape(16.dp))
             .fillMaxWidth()
             .height(80.dp)
