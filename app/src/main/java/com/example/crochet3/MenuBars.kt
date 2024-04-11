@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Icon
@@ -29,6 +30,7 @@ import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FloatingActionButton
@@ -179,19 +181,37 @@ fun FavoriteButton(isFavorite: MutableState<Boolean>) {
     FloatingActionButton(
         onClick = {isFavorite.value = !isFavorite.value},
         modifier = Modifier
-            .size(28.dp),
+            .size(32.dp),
         containerColor = Color.White){
         Icon(
             tint = if (isFavorite.value) Color.Red else Color.Gray,
             imageVector = if (isFavorite.value) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
             contentDescription = if (isFavorite.value) "Remove from favorites" else "Add to favorites",
             modifier = Modifier
-                .size(24.dp)
-                .padding(4.dp)
+                .size(28.dp)
+                .padding(2.dp)
+
         )
     }
 }
-
+@Composable
+fun ShareButton(onClick: () -> Unit) {
+    FloatingActionButton(
+        onClick = onClick,
+        modifier = Modifier
+            .size(32.dp),
+        containerColor = Color.White
+    ) {
+        Icon(
+            Icons.Filled.Share,
+            tint = Color.Black,
+            contentDescription = "Share",
+            modifier = Modifier
+                .padding(4.dp)
+                .size(28.dp)
+        )
+    }
+}
 @Composable
 fun PatternCard(pattern:  CrochetPattern, navController: NavController) {
     val isFavorite = remember { mutableStateOf(false) }
@@ -268,6 +288,11 @@ fun FavoriteButtonPreview() {
     FavoriteButton(isFavorite = isFavorite)
 }
 
+@Preview
+@Composable
+fun ShareButtonPreview() {
+    ShareButton(onClick = {})
+}
 @Preview
 @Composable
 fun WhiteCardPreview() {

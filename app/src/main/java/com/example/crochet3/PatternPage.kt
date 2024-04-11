@@ -80,6 +80,9 @@ fun PatternPage(navController: NavController, patternName: String) {
     val openLinkLauncher =
         rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) { result ->
         }
+    val shareLauncher =
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) { result ->
+        }
     val isFavorite = remember { mutableStateOf(false) }
     val pattern = crochetPatterns.first { it.name == patternName }
     val patternImages = listOf(pattern.imageResId, pattern.image2, pattern.image3)
@@ -122,18 +125,18 @@ fun PatternPage(navController: NavController, patternName: String) {
                         modifier = Modifier
                     )
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        FloatingActionButton(
-                            onClick = { /* Handle share action here */ },
-                            modifier = Modifier
-                                .size(42.dp)
-                                .shadow(6.dp, CircleShape),
-                            containerColor = Color.White) {
-                            Icon(
-                                Icons.Filled.Share,
-                                tint = Color.Black,
-                                contentDescription = "Share",
-                                modifier = Modifier
-                                    .size(24.dp)) }
+                        ShareButton(onClick = {
+                            val sendIntent: Intent = Intent().apply {
+                                action = Intent.ACTION_SEND
+                                putExtra(
+                                    Intent.EXTRA_TEXT,
+                                    "Check out this pattern I found on the Crochet App: ${pattern.name}"
+                                )
+                                type = "text/plain"
+                            }
+                            val shareIntent = Intent.createChooser(sendIntent, null)
+                            shareLauncher.launch(shareIntent)
+                        })
                         Spacer(modifier = Modifier.width(12.dp))
                         FavoriteButton(isFavorite = isFavorite)
                         }
