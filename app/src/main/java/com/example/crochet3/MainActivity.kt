@@ -28,10 +28,8 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
@@ -144,6 +142,8 @@ fun MainContent(navController: NavController) {
                         .clickable { navController.navigate("appinfo") }
                 )
             }
+
+            //Search bar
             Surface(
                 color = Color(0xFFFFFFFF), shape = RoundedCornerShape(10.dp),
                 modifier = Modifier
@@ -233,6 +233,7 @@ fun MainContent(navController: NavController) {
                     }
                 }
             }
+                //SEARCHBAR END
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -350,75 +351,6 @@ fun MainContent(navController: NavController) {
 }
 
 
-//the card used for displaying the patterns used throughout the app
-@Composable
-fun PatternCard(pattern:  CrochetPattern, navController: NavController) {
-    val isFavorite = remember { mutableStateOf(false) }
-    Box {
-        Card(modifier = Modifier
-            .padding(6.dp)
-            .border(6.dp, Color.White, RoundedCornerShape(16.dp))
-            .shadow(8.dp, shape = RoundedCornerShape(16.dp))
-            .height(175.dp)
-            .width(175.dp)
-            .clickable { navController.navigate("patternPage/${pattern.name}") }) {
-            Image(
-                painter = painterResource(id = pattern.imageResId),
-                contentDescription = "Crochet Image",
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .clip(
-                        RoundedCornerShape(
-                            topStart = 16.dp,
-                            topEnd = 16.dp,
-                            bottomEnd = 0.dp,
-                            bottomStart = 0.dp
-                        )
-                    )
-                    .weight(1f)
-            )
-            Row {
-                Column(
-                    modifier = Modifier
-                        .padding(start = 6.dp, bottom = 4.dp)
-                        .fillMaxWidth()
-                        .background(Color.White)
-                ) {
-                    Text(
-                        text = pattern.name,
-                        style = Typography.titleSmall,
-                        modifier = Modifier.padding(start = 4.dp, top = 2.dp)
-                    )
-                    Text(
-                        text = pattern.creatorname,
-                        style = TitleTiny,
-                        modifier = Modifier.padding(start = 4.dp, bottom = 2.dp)
-                    )
-                }
-
-            }
-        }
-        Row( modifier = Modifier
-            .fillMaxWidth(.85f)
-            .padding(top = 18.dp, end = 0.dp),verticalAlignment = Alignment.Top, horizontalArrangement = Arrangement.End) {
-            FloatingActionButton(
-                onClick = { isFavorite.value = !isFavorite.value},
-                modifier = Modifier
-                    .size(28.dp),
-                containerColor = Color.White
-            ){ Icon(
-                imageVector = Icons.Filled.Favorite,
-                contentDescription = "heart icon",
-                tint = if (isFavorite.value) Color.Red else Color.Gray,
-                modifier = Modifier
-                    .size(24.dp)
-                    .padding(4.dp)
-            )
-            }
-        }
-    }
-}
 
 //a preview of the main screen
 @Preview(showBackground = true)

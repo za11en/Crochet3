@@ -1,13 +1,19 @@
 package com.example.crochet3
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Icon
@@ -19,17 +25,24 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -40,6 +53,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.crochet3.ui.theme.AppPrime
 import com.example.crochet3.ui.theme.AppPrimeSecond
 import com.example.crochet3.ui.theme.AppPrimeThird
+import com.example.crochet3.ui.theme.TitleTiny
 import com.example.crochet3.ui.theme.Typography
 
 @Composable
@@ -71,8 +85,6 @@ fun TopAppBar(navController: NavController, title: String) {
         )
     }
 }
-
-
 
 @Composable
 fun BottomBar(navController: NavController) {
@@ -162,6 +174,80 @@ fun WhiteCard(content: @Composable () -> Unit) {
     }
 }
 
+@Composable
+fun FavoriteButton(isFavorite: MutableState<Boolean>) {
+    FloatingActionButton(
+        onClick = {isFavorite.value = !isFavorite.value},
+        modifier = Modifier
+            .size(28.dp),
+        containerColor = Color.White){
+        Icon(
+            tint = if (isFavorite.value) Color.Red else Color.Gray,
+            imageVector = if (isFavorite.value) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
+            contentDescription = if (isFavorite.value) "Remove from favorites" else "Add to favorites",
+            modifier = Modifier
+                .size(24.dp)
+                .padding(4.dp)
+        )
+    }
+}
+
+@Composable
+fun PatternCard(pattern:  CrochetPattern, navController: NavController) {
+    val isFavorite = remember { mutableStateOf(false) }
+    Box {
+        Card(modifier = Modifier
+            .padding(6.dp)
+            .border(6.dp, Color.White, RoundedCornerShape(16.dp))
+            .shadow(8.dp, shape = RoundedCornerShape(16.dp))
+            .height(175.dp)
+            .width(175.dp)
+            .clickable { navController.navigate("patternPage/${pattern.name}") }) {
+            Image(
+                painter = painterResource(id = pattern.imageResId),
+                contentDescription = "Crochet Image",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clip(
+                        RoundedCornerShape(
+                            topStart = 16.dp,
+                            topEnd = 16.dp,
+                            bottomEnd = 0.dp,
+                            bottomStart = 0.dp
+                        )
+                    )
+                    .weight(1f)
+            )
+            Row {
+                Column(
+                    modifier = Modifier
+                        .padding(start = 6.dp, bottom = 4.dp)
+                        .fillMaxWidth()
+                        .background(Color.White)
+                ) {
+                    Text(
+                        text = pattern.name,
+                        style = Typography.titleSmall,
+                        modifier = Modifier.padding(start = 4.dp, top = 2.dp)
+                    )
+                    Text(
+                        text = pattern.creatorname,
+                        style = TitleTiny,
+                        modifier = Modifier.padding(start = 4.dp, bottom = 2.dp)
+                    )
+                }
+
+            }
+        }
+        Row( modifier = Modifier
+            .fillMaxWidth(.85f)
+            .padding(top = 18.dp, end = 0.dp),verticalAlignment = Alignment.Top, horizontalArrangement = Arrangement.End) {
+            FavoriteButton(isFavorite = isFavorite)
+        }
+    }
+}
+
 
 @Preview
 @Composable
@@ -173,6 +259,13 @@ fun BottomBarPreview() {
 @Composable
 fun TopMenuPreview() {
     TopAppBar(navController = rememberNavController(), title = "Home")
+}
+
+@Preview
+@Composable
+fun FavoriteButtonPreview() {
+    val isFavorite = remember { mutableStateOf(false) }
+    FavoriteButton(isFavorite = isFavorite)
 }
 
 @Preview

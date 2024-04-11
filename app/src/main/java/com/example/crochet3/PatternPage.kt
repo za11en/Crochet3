@@ -39,8 +39,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
@@ -82,12 +80,6 @@ fun PatternPage(navController: NavController, patternName: String) {
     val openLinkLauncher =
         rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) { result ->
         }
-    val onFavoriteClick: (Boolean) -> Unit = { isFavorite ->
-        if (isFavorite) {
-
-        }
-        else { }
-    }
     val isFavorite = remember { mutableStateOf(false) }
     val pattern = crochetPatterns.first { it.name == patternName }
     val patternImages = listOf(pattern.imageResId, pattern.image2, pattern.image3)
@@ -135,38 +127,17 @@ fun PatternPage(navController: NavController, patternName: String) {
                             modifier = Modifier
                                 .size(42.dp)
                                 .shadow(6.dp, CircleShape),
-                            containerColor = Color.White
-                        )
-                        {
+                            containerColor = Color.White) {
                             Icon(
                                 Icons.Filled.Share,
                                 tint = Color.Black,
                                 contentDescription = "Share",
                                 modifier = Modifier
-                                    .size(24.dp)
-                            )
-                        }
+                                    .size(24.dp)) }
                         Spacer(modifier = Modifier.width(12.dp))
-                        FloatingActionButton(
-                            onClick = {
-                                isFavorite.value = !isFavorite.value
-                                onFavoriteClick(isFavorite.value)
-                            },
-                            modifier = Modifier
-                                .size(42.dp)
-                                .shadow(6.dp, CircleShape),
-                            containerColor = Color.White
-                        )
-                        {
-                            Icon(
-                                imageVector = if (isFavorite.value) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
-                                contentDescription = if (isFavorite.value) "Filled Favorite Icon" else "Empty Favorite Icon",
-                                tint = if (isFavorite.value) Color.Red else Color.Gray,
-                                modifier = Modifier
-                                    .size(24.dp)
-                            )
+                        FavoriteButton(isFavorite = isFavorite)
                         }
-                    }
+
                 }
                 LazyRow {
                     items(patternImages) { imageResId ->
@@ -303,7 +274,8 @@ fun PatternPage(navController: NavController, patternName: String) {
                                             tint = Color.Blue,
                                             painter = painterResource(id = R.drawable.link),
                                             contentDescription = null,
-                                            modifier = Modifier.size(24.dp)
+                                            modifier = Modifier
+                                                .size(24.dp)
                                                 .clickable {
                                                     val openURL = Intent(Intent.ACTION_VIEW)
                                                     openURL.data = Uri.parse(pattern.creatorlink)
@@ -410,7 +382,10 @@ fun PatternPage(navController: NavController, patternName: String) {
                                         ) {
                                             Row(
                                                 modifier = Modifier
-                                                    .background(Color.White, RoundedCornerShape(8.dp))
+                                                    .background(
+                                                        Color.White,
+                                                        RoundedCornerShape(8.dp)
+                                                    )
                                                     .fillMaxWidth()
                                                     .padding(16.dp),
                                                 horizontalArrangement = Arrangement.SpaceBetween,

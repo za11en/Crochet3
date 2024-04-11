@@ -70,13 +70,7 @@ fun SearchPage(navController: NavController,initialSearchText: String, searchVie
         modifier = Modifier.background(appGradient())
     ) {
         Column(modifier = Modifier.padding(top = 100.dp)) {
-            Surface(
-                color = Color.White, shape = RoundedCornerShape(10.dp),
-                modifier = Modifier
-                    .padding(start = 16.dp, end = 16.dp)
-            ) {
-                SearchBar(searchText, isFocused, searchViewModel, navController)
-            }
+            SearchBar(searchText, isFocused, searchViewModel, navController)
             Spacer(modifier = Modifier.height(32.dp))
             WhiteCard {
                 Column(
@@ -125,13 +119,18 @@ fun SearchBar(
         searchText: String,
         isFocused: Boolean,
         searchViewModel: SearchViewModel,
-        navController: NavController)
-{
-    Box(modifier = Modifier.fillMaxWidth()) {
-        IconButton(onClick = {
-            if (searchText.isNotEmpty()) {
-                navController.navigate("searchPage/$searchText")
-            } }, modifier = Modifier.align(Alignment.CenterStart)) {
+        navController: NavController) {
+    Surface(
+        color = Color.White, shape = RoundedCornerShape(10.dp),
+        modifier = Modifier
+            .padding(start = 16.dp, end = 16.dp)
+    ) {
+        Box(modifier = Modifier.fillMaxWidth()) {
+            IconButton(onClick = {
+                if (searchText.isNotEmpty()) {
+                    navController.navigate("searchPage/$searchText")
+                }
+            }, modifier = Modifier.align(Alignment.CenterStart)) {
                 Icon(
                     imageVector = Icons.Filled.Search,
                     contentDescription = "Search Icon",
@@ -168,7 +167,8 @@ fun SearchBar(
                     fontWeight = FontWeight.Normal,
                     modifier = Modifier
                         .padding(start = 50.dp)
-                        .align(Alignment.CenterStart))
+                        .align(Alignment.CenterStart)
+                )
             }
             if (!isFocused) {
                 Icon(
@@ -207,6 +207,7 @@ fun SearchBar(
             }
         }
     }
+}
 
 @Composable
 fun SortMenu(searchViewModel: SearchViewModel = viewModel()) {
