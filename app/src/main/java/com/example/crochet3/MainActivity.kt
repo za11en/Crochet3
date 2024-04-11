@@ -6,7 +6,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -65,7 +64,6 @@ import com.example.crochet3.ui.theme.AppPrimeSecond
 import com.example.crochet3.ui.theme.AppPrimeThird
 import com.example.crochet3.ui.theme.Typography
 import com.example.crochet3.ui.theme.Poppins
-import com.example.crochet3.ui.theme.TitleTiny
 import com.example.crochet3.viewModels.MainViewModel
 
 
