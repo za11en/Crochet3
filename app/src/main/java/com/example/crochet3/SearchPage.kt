@@ -1,14 +1,12 @@
 package com.example.crochet3
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.Image
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
 import com.example.crochet3.ui.theme.Crochet3Theme
 import androidx.navigation.NavController
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -37,7 +35,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.Card
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -49,10 +46,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -115,50 +110,10 @@ fun SearchPage(navController: NavController,initialSearchText: String, searchVie
                         columns = GridCells.Fixed(2), modifier = Modifier.padding(bottom = 80.dp)
                     ) {
                         items(patterns) { pattern ->
-                            Card(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(6.dp)
-                                    .height(175.dp)
-                                    .width(175.dp)
-                                    .border(6.dp, Color(0xFFFFFFFF), RoundedCornerShape(16.dp))
-                                    .shadow(4.dp, shape = RoundedCornerShape(16.dp))
-                                    .clickable { navController.navigate("patternPage/${pattern.name}") },
-                                shape = RoundedCornerShape(16.dp)
-                            ) {
-                                Column(
-                                    modifier = Modifier
-                                        .background(Color.White)
-                                        .clip(
-                                            RoundedCornerShape(
-                                                topStart = 10.dp,
-                                                topEnd = 10.dp,
-                                                bottomEnd = 0.dp,
-                                                bottomStart = 0.dp
-                                            )
-                                        )
-                                ) {
-                                    Image(
-                                        painter = painterResource(id = pattern.imageResId),
-                                        contentDescription = "Image for ${pattern.name}",
-                                        contentScale = ContentScale.Crop,
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .height(135.dp)
-                                    )
-                                    Text(
-                                        text = pattern.name,
-                                        fontSize = 14.sp,
-                                        fontWeight = FontWeight.SemiBold,
-                                        color = Color.Black,
-                                        modifier = Modifier
-                                            .align(Alignment.CenterHorizontally)
-                                            .padding(top = 8.dp, bottom = 8.dp),
-                                    )
-                                }
-                            }
+                            PatternCard(pattern, navController)
                         }
                     }
+                    Spacer(modifier = Modifier.height(80.dp))
                 }
             }
         }

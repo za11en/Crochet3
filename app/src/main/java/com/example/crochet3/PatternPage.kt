@@ -83,7 +83,9 @@ fun PatternPage(navController: NavController, patternName: String) {
         rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) { result ->
         }
     val onFavoriteClick: (Boolean) -> Unit = { isFavorite ->
-        if (isFavorite) { }
+        if (isFavorite) {
+
+        }
         else { }
     }
     val isFavorite = remember { mutableStateOf(false) }

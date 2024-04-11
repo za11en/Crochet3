@@ -10,6 +10,9 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 
 class MainViewModel:ViewModel() {
+    private val _isFavorite =   MutableStateFlow(false)
+    val isFavorite = _isFavorite.asStateFlow()
+
     private val _searchText = MutableStateFlow("")
     val searchText = _searchText.asStateFlow()
 

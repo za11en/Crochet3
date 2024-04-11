@@ -26,6 +26,8 @@ enum class Screens(val route: String) {
 
 data class CrochetPattern(
     val name: String,
+    val newPattern: Boolean,
+    val featured: Boolean,
     val difficulty: Difficulty,
     val hookSize: HookSize,
     val category: Category,
