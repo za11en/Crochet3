@@ -50,6 +50,7 @@ android {
 }
 
 dependencies {
+    implementation("com.google.accompanist:accompanist-pager-indicators:0.20.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
     implementation("androidx.datastore:datastore-preferences:1.0.0")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.7.0")

@@ -5,6 +5,15 @@ import android.content.Intent
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.animateIntAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.updateTransition
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.runtime.Composable
@@ -63,9 +72,14 @@ import com.example.crochet3.ui.theme.Poppins
 import com.example.crochet3.ui.theme.Typography
 import kotlinx.coroutines.launch
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.material3.Card
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
+import kotlinx.coroutines.delay
 
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -125,10 +139,8 @@ fun PatternPage(navController: NavController, patternName: String) {
                         ShareButton(onClick = {
                             val sendIntent: Intent = Intent().apply {
                                 action = Intent.ACTION_SEND
-                                putExtra(
-                                    Intent.EXTRA_TEXT,
-                                    "Check out this pattern I found on the Crochet App: ${pattern.name}"
-                                )
+                                putExtra(Intent.EXTRA_TEXT,
+                                    "Check out this pattern I found on the Crochet App: ${pattern.name}")
                                 type = "text/plain"
                             }
                             val shareIntent = Intent.createChooser(sendIntent, null)
@@ -137,38 +149,11 @@ fun PatternPage(navController: NavController, patternName: String) {
                         Spacer(modifier = Modifier.width(12.dp))
                         FavoriteButton(isFavorite = isFavorite)
                         }
-
                 }
-                LazyRow {
-                    items(patternImages) { imageResId ->
-                        Box(
-                            modifier = Modifier
-                                .size(210.dp) // Set the size of the LazyRow item
-                                .padding(start = 16.dp, top = 8.dp, bottom = 16.dp, end = 0.dp)
-                                .background(Color.White, RoundedCornerShape(16.dp))
-                                .border(4.dp, Color.White, RoundedCornerShape(16.dp))
-                                .clickable { selectedImage.value = imageResId }
-                        ) {
-                            Image(
-                                painter = painterResource(id = imageResId),
-                                contentDescription = "Pattern Image",
-                                contentScale = ContentScale.Crop,
-                                modifier = Modifier
-                                    .fillMaxSize() // Make the image fill the maximum size
-                                    .clip(RoundedCornerShape(16.dp))
-                            )
-                        }
-                    }
-                }
+                ImageCarousel(images = patternImages)
                 Spacer(modifier = Modifier.height(8.dp))
-                Column(
-                    modifier = Modifier
-                        .background(Color(0xFFFFFFFF), RoundedCornerShape(32.dp, 32.dp, 0.dp, 0.dp))
-                        .padding(top = 8.dp, start = 0.dp, end = 0.dp)
-                        .fillMaxSize(),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-
+                WhiteCard{
+                    //tab row and pager
                     TabRow(
                         selectedTabIndex = pagerState.currentPage,
                         containerColor = Color.White,
@@ -432,8 +417,108 @@ fun PatternPage(navController: NavController, patternName: String) {
         }
     }
 }
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun ImageCarousel(images: List<Int>) {
+    val pagerState = rememberPagerState(pageCount = { images.size })
+    val scope = rememberCoroutineScope()
+    val indicatorVisible = remember { mutableStateOf(true) }
 
+    LaunchedEffect(pagerState.currentPage) {
+        indicatorVisible.value = true
+        delay(2000)
+        indicatorVisible.value = false
+    }
+    Box () {
+        HorizontalPager(state = pagerState) { page ->
+            Image(
+                painter = painterResource(id = images[page]),
+                contentDescription = "Image $page",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(250.dp)
+            )
+        }
+        AnimatedVisibility(
+            visible = indicatorVisible.value,
+            enter = fadeIn(),
+            exit = fadeOut(),
 
+        ) {
+            Box(
+                modifier = Modifier.fillMaxWidth()){
+                PagerNumberIndicator(
+                    pagerState = pagerState,
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(top = 16.dp, end = 24.dp, bottom = 16.dp)
+                )
+            }
+        }
+        CustomPagerIndicator(
+            pagerState = pagerState,
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 16.dp)
+        )
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun PagerNumberIndicator(pagerState: PagerState, modifier: Modifier = Modifier) {
+    Box(
+        modifier = modifier
+            .background(Color(0x55000000), RoundedCornerShape(16.dp))
+            .padding(top = 8.dp, bottom = 8.dp, start = 20.dp, end = 20.dp)
+    ) {
+        Text(
+            text = "${pagerState.currentPage + 1} / ${pagerState.pageCount}",
+            color = Color.White,
+            style = Typography.bodyLarge,
+            modifier = Modifier
+        )
+    }
+}
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun CustomPagerIndicator(
+    pagerState: PagerState,
+    modifier: Modifier = Modifier,
+    activeColor: Color = AppPrime,
+    inactiveColor: Color = AppPrimeSecond,
+    circleRadius: Float = 20f,
+    spacing: Float = 32f
+) {
+    val transition = updateTransition(pagerState.currentPage, label = "Page indicator transition")
+    val offset by transition.animateFloat(
+        transitionSpec = { tween(durationMillis = 500, easing = FastOutSlowInEasing) },
+        label = ""
+    ) { page -> page * (circleRadius * 2 + spacing) }
+
+    val animatedPage by animateIntAsState(
+        targetValue = pagerState.currentPage,
+        animationSpec = tween(durationMillis = 500, easing = FastOutSlowInEasing), label = ""
+    )
+
+    Canvas(modifier = modifier) {
+        val circleY = size.height
+        val totalWidth = pagerState.pageCount * (circleRadius * 2) + (pagerState.pageCount - 1) * spacing
+        val startX = (size.width - totalWidth) / 2
+        for (i in 0 until pagerState.pageCount) {
+            val color = if (i == animatedPage) activeColor else inactiveColor
+            drawCircle(color, circleRadius, Offset(startX + (i * (circleRadius * 2 + spacing)), circleY))
+        }
+        drawCircle(activeColor, circleRadius, Offset(startX + offset, circleY))
+    }
+}
+
+@Preview
+@Composable
+fun ImageCarouselPreview() {
+    ImageCarousel(images = listOf(R.drawable.amigurumi, R.drawable.b, R.drawable.c))
+}
 
 @Preview
 @Composable

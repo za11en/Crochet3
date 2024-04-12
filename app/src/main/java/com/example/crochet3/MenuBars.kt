@@ -280,7 +280,28 @@ fun BottomBarPreview() {
 fun TopMenuPreview() {
     TopAppBar(navController = rememberNavController(), title = "Home")
 }
-
+@Preview
+@Composable
+fun PatternCardPreview() {
+    val previewtest = CrochetPattern(
+        "test",
+        true,
+        true,
+        Difficulty.EASY,
+        HookSize.TWOPOINTFIVE,
+        Category.HATS,
+        "test",
+        "1",
+        R.drawable.a,
+        R.drawable.b,
+        R.drawable.c,
+        "test",
+        "test",
+        "test",
+        "")
+    val navController = rememberNavController()
+    PatternCard(navController = navController, pattern =  previewtest)
+}
 @Preview
 @Composable
 fun FavoriteButtonPreview() {
