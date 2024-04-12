@@ -93,7 +93,7 @@ fun PatternPage(navController: NavController, patternName: String) {
     val pattern = crochetPatterns.first { it.name == patternName }
     val patternImages = listOf(pattern.imageResId, pattern.image2, pattern.image3)
     val pagerState = rememberPagerState(pageCount = { 3 })
-
+    val screenWidth = getScreenWidth()
     Scaffold(
         topBar = { TopAppBarWithShare(navController, pattern, shareLauncher) },
         bottomBar = { BottomBar(navController) }
@@ -106,7 +106,6 @@ fun PatternPage(navController: NavController, patternName: String) {
             Column {
 
                 ImageCarousel(images = patternImages, onClick = { imageResId -> selectedImage.value = imageResId })
-                Spacer(modifier = Modifier.height(16.dp))
                 WhiteCard{
                     //tab row and pager
                     TabRow(
@@ -122,7 +121,7 @@ fun PatternPage(navController: NavController, patternName: String) {
                         divider = { HorizontalDivider(thickness = 1.dp, color = Color.Gray) },
                     ) {
                         Tab(
-                            text = { Text("Info", fontSize = 18.sp, fontWeight = FontWeight.Bold) },
+                            text = { Text("Info", fontSize = 17.sp, fontWeight = FontWeight.Bold) },
                             selected = pagerState.currentPage == 0,
                             onClick = {
                                 scope.launch {
@@ -131,7 +130,7 @@ fun PatternPage(navController: NavController, patternName: String) {
                             }
                         )
                         Tab(
-                            text = { Text("Materials", fontSize = 18.sp) },
+                            text = { Text("Materials", fontSize = 17.sp) },
                             selected = pagerState.currentPage == 1,
                             onClick = {
                                 scope.launch {
@@ -140,7 +139,7 @@ fun PatternPage(navController: NavController, patternName: String) {
                             }
                         )
                         Tab(
-                            text = { Text("Instructions", fontSize = 18.sp) },
+                            text = { Text("Instructions", fontSize = 17.sp) },
                             selected = pagerState.currentPage == 2,
                             onClick = {
                                 scope.launch {
@@ -167,8 +166,8 @@ fun PatternPage(navController: NavController, patternName: String) {
                                         Text(
                                             text = pattern.name,
                                             color = Color.Black,
-                                            fontWeight = FontWeight.SemiBold,
-                                            fontSize = 18.sp,
+                                            fontWeight = FontWeight.Bold,
+                                            fontSize = 24.sp,
                                             textAlign = TextAlign.Left,
                                         )
                                     }
@@ -420,7 +419,7 @@ fun ImageCarousel(images: List<Int>, onClick: (Int) -> Unit) {
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(250.dp)
+                    .height(300.dp)
                     .clickable { onClick(images[page]) }
             )
         }
@@ -432,7 +431,7 @@ fun ImageCarousel(images: List<Int>, onClick: (Int) -> Unit) {
         ) {
             Box(
                 modifier = Modifier
-                    .height(250.dp)
+                    .height(300.dp)
                     .fillMaxWidth()){
                 PagerNumberIndicator(
                     pagerState = pagerState,
@@ -446,7 +445,7 @@ fun ImageCarousel(images: List<Int>, onClick: (Int) -> Unit) {
             pagerState = pagerState,
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .padding(bottom = 24.dp)
+                .padding(start = 12.dp,bottom = 24.dp)
         )
     }
 }
@@ -477,6 +476,7 @@ fun CustomPagerIndicator(
     circleRadius: Float = 20f,
     spacing: Float = 32f
 ) {
+
     val transition = updateTransition(pagerState.currentPage, label = "Page indicator transition")
     val offset by transition.animateFloat(
         transitionSpec = { tween(durationMillis = 500, easing = FastOutSlowInEasing) },

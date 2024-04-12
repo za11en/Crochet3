@@ -48,10 +48,12 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
@@ -132,9 +134,10 @@ fun TopAppBarWithShare(navController: NavController, pattern: CrochetPattern, sh
                 }
                 val shareIntent = Intent.createChooser(sendIntent, null)
                 shareLauncher.launch(shareIntent)
-            }, size = 40)
-            Spacer(modifier = Modifier.width(12.dp))
-            FavoriteButton(isFavorite = isFavorite, size = 40)
+            }, size = 44)
+            Spacer(modifier = Modifier.width(24.dp))
+            FavoriteButton(isFavorite = isFavorite, size = 44)
+            Spacer(modifier = Modifier.width(8.dp))
         }
     }
 }
@@ -199,6 +202,12 @@ fun BottomBarItem(navController: NavController, currentRoute: String?, route: St
             fontSize = 14.sp,
             fontWeight = FontWeight.SemiBold)
     }
+}
+
+@Composable
+fun getScreenWidth(): Dp {
+    val configuration = LocalConfiguration.current
+    return configuration.screenWidthDp.dp
 }
 @Composable
 fun appGradient(): Brush {
@@ -267,14 +276,14 @@ fun ShareButton(onClick: () -> Unit, size : Int) {
 @Composable
 fun PatternCard(pattern:  CrochetPattern, navController: NavController) {
     val isFavorite = remember { mutableStateOf(false) }
-    Box {
+    Box (){
         Card(modifier = Modifier
-            .padding(6.dp)
+           .padding(6.dp)
             .border(6.dp, Color.White, RoundedCornerShape(16.dp))
             .shadow(8.dp, shape = RoundedCornerShape(16.dp))
             .height(175.dp)
-            .width(175.dp)
-            .clickable { navController.navigate("patternPage/${pattern.name}") }) {
+            .width(getScreenWidth() /2 )
+            .clickable { navController.navigate("patternPage/${pattern.name}") }){
             Image(
                 painter = painterResource(id = pattern.imageResId),
                 contentDescription = "Crochet Image",
@@ -309,12 +318,11 @@ fun PatternCard(pattern:  CrochetPattern, navController: NavController) {
                         modifier = Modifier.padding(start = 4.dp, bottom = 2.dp)
                     )
                 }
-
             }
         }
         Row( modifier = Modifier
-            .fillMaxWidth(.9f)
-            .padding(top = 18.dp, end = 0.dp),verticalAlignment = Alignment.Top, horizontalArrangement = Arrangement.End) {
+            .width(getScreenWidth() /2)
+            .padding(top = 18.dp, end = 18.dp),verticalAlignment = Alignment.Top, horizontalArrangement = Arrangement.End) {
             FavoriteButton(isFavorite = isFavorite, size = 30)
         }
     }
