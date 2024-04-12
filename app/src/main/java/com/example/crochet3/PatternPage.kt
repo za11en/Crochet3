@@ -19,8 +19,9 @@ import androidx.compose.foundation.Image
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.rememberTransformableState
+import androidx.compose.foundation.gestures.transformable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -32,8 +33,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -45,11 +44,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
@@ -58,7 +54,6 @@ import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -77,6 +72,7 @@ import androidx.compose.material3.Card
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.delay
@@ -94,12 +90,12 @@ fun PatternPage(navController: NavController, patternName: String) {
     val shareLauncher =
         rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) { result ->
         }
-    val isFavorite = remember { mutableStateOf(false) }
     val pattern = crochetPatterns.first { it.name == patternName }
     val patternImages = listOf(pattern.imageResId, pattern.image2, pattern.image3)
     val pagerState = rememberPagerState(pageCount = { 3 })
 
     Scaffold(
+        topBar = { TopAppBarWithShare(navController, pattern, shareLauncher) },
         bottomBar = { BottomBar(navController) }
     ) {
         Box(
@@ -108,50 +104,9 @@ fun PatternPage(navController: NavController, patternName: String) {
                 .background(appGradient())
         ) {
             Column {
-                Row(
-                    modifier = Modifier
-                        .padding(top = 24.dp, start = 14.dp, bottom = 16.dp, end = 14.dp)
-                        .fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    IconButton(
-                        onClick = { navController.navigateUp() },
-                        modifier = Modifier
-                            .background(Color(0x20990040), RoundedCornerShape(12.dp))
-                    )
-                    {
-                        Icon(
-                            Icons.AutoMirrored.Filled.ArrowBack,
-                            tint = Color.White,
-                            contentDescription = "Back",
-                            modifier = Modifier
-                                .size(24.dp)
-                                .clickable { navController.navigateUp() })
-                    }
-                    Text(
-                        text = pattern.name,
-                        style = Typography.titleLarge,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier
-                    )
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        ShareButton(onClick = {
-                            val sendIntent: Intent = Intent().apply {
-                                action = Intent.ACTION_SEND
-                                putExtra(Intent.EXTRA_TEXT,
-                                    "Check out this pattern I found on the Crochet App: ${pattern.name}")
-                                type = "text/plain"
-                            }
-                            val shareIntent = Intent.createChooser(sendIntent, null)
-                            shareLauncher.launch(shareIntent)
-                        })
-                        Spacer(modifier = Modifier.width(12.dp))
-                        FavoriteButton(isFavorite = isFavorite)
-                        }
-                }
-                ImageCarousel(images = patternImages)
-                Spacer(modifier = Modifier.height(8.dp))
+
+                ImageCarousel(images = patternImages, onClick = { imageResId -> selectedImage.value = imageResId })
+                Spacer(modifier = Modifier.height(16.dp))
                 WhiteCard{
                     //tab row and pager
                     TabRow(
@@ -165,7 +120,6 @@ fun PatternPage(navController: NavController, patternName: String) {
                             )
                         },
                         divider = { HorizontalDivider(thickness = 1.dp, color = Color.Gray) },
-                        modifier = Modifier.padding(start = 8.dp, end = 8.dp)
                     ) {
                         Tab(
                             text = { Text("Info", fontSize = 18.sp, fontWeight = FontWeight.Bold) },
@@ -209,6 +163,18 @@ fun PatternPage(navController: NavController, patternName: String) {
                                         Difficulty.INTERMEDIATE -> Color.Blue
                                         Difficulty.HARD -> Color.Red
                                     }
+                                    Row(verticalAlignment = Alignment.CenterVertically) {
+                                        Text(
+                                            text = pattern.name,
+                                            color = Color.Black,
+                                            fontWeight = FontWeight.SemiBold,
+                                            fontSize = 18.sp,
+                                            textAlign = TextAlign.Left,
+                                        )
+                                    }
+                                    Spacer(modifier = Modifier.height(16.dp))
+                                    HorizontalDivider(thickness = 1.dp, color = Color(0xFFCCCCCC))
+                                    Spacer(modifier = Modifier.height(16.dp))
                                     Row(verticalAlignment = Alignment.CenterVertically) {
                                         Text(
                                             text = "Difficulty: ",
@@ -398,19 +364,36 @@ fun PatternPage(navController: NavController, patternName: String) {
             }
         }
         selectedImage.value?.let { imageResId ->
+            val scale = remember { mutableStateOf(1f) }
+            val rotation = remember { mutableStateOf(0f) }
+            val offset = remember { mutableStateOf(Offset.Zero) }
+            val state = rememberTransformableState { zoomChange, offsetChange, rotationChange ->
+                scale.value *= zoomChange
+                rotation.value += rotationChange
+                offset.value += offsetChange
+            }
             Dialog(onDismissRequest = { selectedImage.value = null }) {
                 Box(
                     modifier = Modifier
+                        .clickable { selectedImage.value = null }
                         .fillMaxSize()
-                        .fillMaxWidth()
-                        .clickable { selectedImage.value = null },
+                        .fillMaxWidth(),
                     contentAlignment = Alignment.Center
                 ) {
                     Image(
                         painter = painterResource(id = imageResId),
                         contentDescription = "Pattern Image",
                         contentScale = ContentScale.Fit,
-                        modifier = Modifier.size(380.dp)
+                        modifier = Modifier
+                            .size(380.dp)
+                            .graphicsLayer(
+                                scaleX = scale.value,
+                                scaleY = scale.value,
+                                translationX = offset.value.x,
+                                translationY = offset.value.y
+                            )
+                            .transformable(state = state)
+                            .clickable { selectedImage.value = null }
                     )
                 }
             }
@@ -419,7 +402,7 @@ fun PatternPage(navController: NavController, patternName: String) {
 }
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun ImageCarousel(images: List<Int>) {
+fun ImageCarousel(images: List<Int>, onClick: (Int) -> Unit) {
     val pagerState = rememberPagerState(pageCount = { images.size })
     val scope = rememberCoroutineScope()
     val indicatorVisible = remember { mutableStateOf(true) }
@@ -438,6 +421,7 @@ fun ImageCarousel(images: List<Int>) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(250.dp)
+                    .clickable { onClick(images[page]) }
             )
         }
         AnimatedVisibility(
@@ -447,11 +431,13 @@ fun ImageCarousel(images: List<Int>) {
 
         ) {
             Box(
-                modifier = Modifier.fillMaxWidth()){
+                modifier = Modifier
+                    .height(250.dp)
+                    .fillMaxWidth()){
                 PagerNumberIndicator(
                     pagerState = pagerState,
                     modifier = Modifier
-                        .align(Alignment.TopEnd)
+                        .align(Alignment.BottomEnd)
                         .padding(top = 16.dp, end = 24.dp, bottom = 16.dp)
                 )
             }
@@ -460,7 +446,7 @@ fun ImageCarousel(images: List<Int>) {
             pagerState = pagerState,
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .padding(bottom = 16.dp)
+                .padding(bottom = 24.dp)
         )
     }
 }
@@ -504,7 +490,7 @@ fun CustomPagerIndicator(
 
     Canvas(modifier = modifier) {
         val circleY = size.height
-        val totalWidth = pagerState.pageCount * (circleRadius * 2) + (pagerState.pageCount - 1) * spacing
+        val totalWidth = pagerState.pageCount * (circleRadius * 2 + spacing) - spacing
         val startX = (size.width - totalWidth) / 2
         for (i in 0 until pagerState.pageCount) {
             val color = if (i == animatedPage) activeColor else inactiveColor
@@ -517,7 +503,7 @@ fun CustomPagerIndicator(
 @Preview
 @Composable
 fun ImageCarouselPreview() {
-    ImageCarousel(images = listOf(R.drawable.amigurumi, R.drawable.b, R.drawable.c))
+    ImageCarousel(images = listOf(R.drawable.amigurumi, R.drawable.b, R.drawable.c), onClick = {})
 }
 
 @Preview

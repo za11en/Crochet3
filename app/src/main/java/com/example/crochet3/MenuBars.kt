@@ -1,5 +1,7 @@
 package com.example.crochet3
 
+import android.content.Intent
+import androidx.activity.result.ActivityResultLauncher
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -8,6 +10,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -69,7 +72,7 @@ fun TopAppBar(navController: NavController, title: String) {
         IconButton(
             onClick = { navController.navigateUp() },
             modifier = Modifier
-                .background(Color(0x20990040), RoundedCornerShape(12.dp)))
+                .background(Color(0x20000000), RoundedCornerShape(12.dp)))
         {
             Icon(
                 Icons.AutoMirrored.Filled.ArrowBack,
@@ -87,7 +90,54 @@ fun TopAppBar(navController: NavController, title: String) {
         )
     }
 }
-
+@Composable
+fun TopAppBarWithShare(navController: NavController, pattern: CrochetPattern, shareLauncher: ActivityResultLauncher<Intent>) {
+    val isFavorite = remember { mutableStateOf(false) }
+    Row(
+        modifier = Modifier
+            .padding(top = 24.dp, start = 14.dp, bottom = 16.dp, end = 14.dp)
+            .fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        IconButton(
+            onClick = { navController.navigateUp() },
+            modifier = Modifier
+                .background(Color(0x20000000), RoundedCornerShape(12.dp))
+        )
+        {
+            Icon(
+                Icons.AutoMirrored.Filled.ArrowBack,
+                tint = Color.White,
+                contentDescription = "Back",
+                modifier = Modifier
+                    .size(24.dp)
+                    .clickable { navController.navigateUp() })
+        }
+        Text(
+            text = "",
+            style = Typography.titleLarge,
+            textAlign = TextAlign.Center,
+            modifier = Modifier
+        )
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            ShareButton(onClick = {
+                val sendIntent: Intent = Intent().apply {
+                    action = Intent.ACTION_SEND
+                    putExtra(
+                        Intent.EXTRA_TEXT,
+                        "Check out this pattern I found on the Crochet App: ${pattern.name}"
+                    )
+                    type = "text/plain"
+                }
+                val shareIntent = Intent.createChooser(sendIntent, null)
+                shareLauncher.launch(shareIntent)
+            }, size = 40)
+            Spacer(modifier = Modifier.width(12.dp))
+            FavoriteButton(isFavorite = isFavorite, size = 40)
+        }
+    }
+}
 @Composable
 fun BottomBar(navController: NavController) {
     val currentRoute = navController.currentDestination?.route
@@ -177,29 +227,31 @@ fun WhiteCard(content: @Composable () -> Unit) {
 }
 
 @Composable
-fun FavoriteButton(isFavorite: MutableState<Boolean>) {
+fun FavoriteButton(isFavorite: MutableState<Boolean>, size: Int) {
     FloatingActionButton(
         onClick = {isFavorite.value = !isFavorite.value},
+        shape = CircleShape,
         modifier = Modifier
-            .size(32.dp),
+            .shadow(8.dp, shape = CircleShape)
+            .size(size.dp),
         containerColor = Color.White){
         Icon(
             tint = if (isFavorite.value) Color.Red else Color.Gray,
             imageVector = if (isFavorite.value) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
             contentDescription = if (isFavorite.value) "Remove from favorites" else "Add to favorites",
             modifier = Modifier
-                .size(28.dp)
-                .padding(2.dp)
-
+                .padding(top = 2.dp)
+                .size((size *.75).dp)
         )
     }
 }
 @Composable
-fun ShareButton(onClick: () -> Unit) {
+fun ShareButton(onClick: () -> Unit, size : Int) {
     FloatingActionButton(
         onClick = onClick,
+        shape = CircleShape,
         modifier = Modifier
-            .size(32.dp),
+            .size(size.dp),
         containerColor = Color.White
     ) {
         Icon(
@@ -207,8 +259,8 @@ fun ShareButton(onClick: () -> Unit) {
             tint = Color.Black,
             contentDescription = "Share",
             modifier = Modifier
-                .padding(4.dp)
-                .size(28.dp)
+                .padding(end = 6.dp)
+                .size((size *.75).dp)
         )
     }
 }
@@ -261,9 +313,9 @@ fun PatternCard(pattern:  CrochetPattern, navController: NavController) {
             }
         }
         Row( modifier = Modifier
-            .fillMaxWidth(.85f)
+            .fillMaxWidth(.9f)
             .padding(top = 18.dp, end = 0.dp),verticalAlignment = Alignment.Top, horizontalArrangement = Arrangement.End) {
-            FavoriteButton(isFavorite = isFavorite)
+            FavoriteButton(isFavorite = isFavorite, size = 30)
         }
     }
 }
@@ -275,11 +327,13 @@ fun BottomBarPreview() {
     BottomBar(navController = rememberNavController())
 }
 
+
 @Preview
 @Composable
 fun TopMenuPreview() {
     TopAppBar(navController = rememberNavController(), title = "Home")
 }
+
 @Preview
 @Composable
 fun PatternCardPreview() {
@@ -306,13 +360,13 @@ fun PatternCardPreview() {
 @Composable
 fun FavoriteButtonPreview() {
     val isFavorite = remember { mutableStateOf(false) }
-    FavoriteButton(isFavorite = isFavorite)
+    FavoriteButton(isFavorite = isFavorite, size = 100)
 }
 
 @Preview
 @Composable
 fun ShareButtonPreview() {
-    ShareButton(onClick = {})
+    ShareButton(onClick = {}, size = 100)
 }
 @Preview
 @Composable

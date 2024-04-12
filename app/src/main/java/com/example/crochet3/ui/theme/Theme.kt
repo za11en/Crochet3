@@ -53,11 +53,9 @@ val Lato = FontFamily(
 val Poppins = FontFamily(
     Font(R.font.poppinsregular),
     Font(R.font.poppinsbold, FontWeight.Bold),
-    Font(R.font.poppinsblack, FontWeight.Black),
-    Font(R.font.poppinslight, FontWeight.Light),
     Font(R.font.poppinsmedium, FontWeight.Medium),
     Font(R.font.poppinsbold, FontWeight.SemiBold),
-    Font(R.font.poppinsextrabold, FontWeight.ExtraBold),
+
 )
 
 @Composable
