@@ -104,10 +104,9 @@ fun PatternPage(navController: NavController, patternName: String) {
                 .background(appGradient())
         ) {
             Column {
-
                 ImageCarousel(images = patternImages, onClick = { imageResId -> selectedImage.value = imageResId })
                 WhiteCard{
-                    //tab row and pager
+                    //tab row
                     TabRow(
                         selectedTabIndex = pagerState.currentPage,
                         containerColor = Color.White,
@@ -148,6 +147,7 @@ fun PatternPage(navController: NavController, patternName: String) {
                             }
                         )
                     }
+                    //tab Row end
                     Spacer(modifier = Modifier.height(24.dp))
                     HorizontalPager(state = pagerState) { page ->
                         when (page) {
@@ -311,7 +311,7 @@ fun PatternPage(navController: NavController, patternName: String) {
                                             brush = Brush.linearGradient(
                                                 colors = listOf(
                                                     AppPrime,
-                                                    Color(0xFFFF29A9)
+                                                    AppPrimeSecond
                                                 )
                                             )
                                         )
@@ -388,8 +388,6 @@ fun PatternPage(navController: NavController, patternName: String) {
                             .graphicsLayer(
                                 scaleX = scale.value,
                                 scaleY = scale.value,
-                                translationX = offset.value.x,
-                                translationY = offset.value.y
                             )
                             .transformable(state = state)
                             .clickable { selectedImage.value = null }
@@ -411,7 +409,7 @@ fun ImageCarousel(images: List<Int>, onClick: (Int) -> Unit) {
         delay(2000)
         indicatorVisible.value = false
     }
-    Box () {
+    Box {
         HorizontalPager(state = pagerState) { page ->
             Image(
                 painter = painterResource(id = images[page]),

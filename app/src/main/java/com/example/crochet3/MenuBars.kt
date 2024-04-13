@@ -276,7 +276,7 @@ fun ShareButton(onClick: () -> Unit, size : Int) {
 @Composable
 fun PatternCard(pattern:  CrochetPattern, navController: NavController) {
     val isFavorite = remember { mutableStateOf(false) }
-    Box (){
+    Box {
         Card(modifier = Modifier
            .padding(6.dp)
             .border(6.dp, Color.White, RoundedCornerShape(16.dp))
