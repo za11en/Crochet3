@@ -364,14 +364,14 @@ fun PatternCardPreview() {
     val navController = rememberNavController()
     PatternCard(navController = navController, pattern =  previewtest)
 }
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun FavoriteButtonPreview() {
     val isFavorite = remember { mutableStateOf(false) }
     FavoriteButton(isFavorite = isFavorite, size = 100)
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun ShareButtonPreview() {
     ShareButton(onClick = {}, size = 100)

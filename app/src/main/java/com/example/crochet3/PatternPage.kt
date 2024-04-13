@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.FastOutSlowInEasing
@@ -75,6 +76,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 
 
@@ -84,12 +86,8 @@ import kotlinx.coroutines.delay
 fun PatternPage(navController: NavController, patternName: String) {
     val scope = rememberCoroutineScope()
     val selectedImage = remember { mutableStateOf<Int?>(null) }
-    val openLinkLauncher =
-        rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) { result ->
-        }
-    val shareLauncher =
-        rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) { result ->
-        }
+    val openLinkLauncher = rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) { result -> }
+    val shareLauncher = rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) { result -> }
     val pattern = crochetPatterns.first { it.name == patternName }
     val patternImages = listOf(pattern.imageResId, pattern.image2, pattern.image3)
     val pagerState = rememberPagerState(pageCount = { 3 })
@@ -106,259 +104,17 @@ fun PatternPage(navController: NavController, patternName: String) {
             Column {
                 ImageCarousel(images = patternImages, onClick = { imageResId -> selectedImage.value = imageResId })
                 WhiteCard{
-                    //tab row
-                    TabRow(
-                        selectedTabIndex = pagerState.currentPage,
-                        containerColor = Color.White,
-                        contentColor = Color.Black,
-                        indicator = { tabPositions ->
-                            SecondaryIndicator(
-                                modifier = Modifier.tabIndicatorOffset(tabPositions[pagerState.currentPage]),
-                                color = AppPrimeSecond,
-                            )
-                        },
-                        divider = { HorizontalDivider(thickness = 1.dp, color = Color.Gray) },
-                    ) {
-                        Tab(
-                            text = { Text("Info", fontSize = 17.sp, fontWeight = FontWeight.Bold) },
-                            selected = pagerState.currentPage == 0,
-                            onClick = {
-                                scope.launch {
-                                    pagerState.animateScrollToPage(0)
-                                }
-                            }
-                        )
-                        Tab(
-                            text = { Text("Materials", fontSize = 17.sp) },
-                            selected = pagerState.currentPage == 1,
-                            onClick = {
-                                scope.launch {
-                                    pagerState.animateScrollToPage(1)
-                                }
-                            }
-                        )
-                        Tab(
-                            text = { Text("Instructions", fontSize = 17.sp) },
-                            selected = pagerState.currentPage == 2,
-                            onClick = {
-                                scope.launch {
-                                    pagerState.animateScrollToPage(2)
-                                }
-                            }
-                        )
-                    }
-                    //tab Row end
+                    PatternTabRow(pagerState, scope)
                     Spacer(modifier = Modifier.height(24.dp))
                     HorizontalPager(state = pagerState) { page ->
                         when (page) {
-                            0 -> {
-                                Column(
-                                    horizontalAlignment = Alignment.Start, modifier = Modifier
-                                        .padding(start = 16.dp, end = 16.dp)
-                                ) {
-                                    val difficultyColor = when (pattern.difficulty) {
-                                        Difficulty.BEGINNER -> Color.Green
-                                        Difficulty.EASY -> Color.Green
-                                        Difficulty.INTERMEDIATE -> Color.Blue
-                                        Difficulty.HARD -> Color.Red
-                                    }
-                                    Row(verticalAlignment = Alignment.CenterVertically) {
-                                        Text(
-                                            text = pattern.name,
-                                            color = Color.Black,
-                                            fontWeight = FontWeight.Bold,
-                                            fontSize = 24.sp,
-                                            textAlign = TextAlign.Left,
-                                        )
-                                    }
-                                    Spacer(modifier = Modifier.height(16.dp))
-                                    HorizontalDivider(thickness = 1.dp, color = Color(0xFFCCCCCC))
-                                    Spacer(modifier = Modifier.height(16.dp))
-                                    Row(verticalAlignment = Alignment.CenterVertically) {
-                                        Text(
-                                            text = "Difficulty: ",
-                                            color = Color.Black,
-                                            fontWeight = FontWeight.SemiBold,
-                                            fontSize = 18.sp,
-                                            textAlign = TextAlign.Left,
-                                        )
-                                        Text(
-                                            text = "${pattern.difficulty}",
-                                            color = difficultyColor,
-                                            fontWeight = FontWeight.SemiBold,
-                                            fontSize = 18.sp,
-                                            textAlign = TextAlign.Left,
-                                        )
-                                    }
-                                    Spacer(modifier = Modifier.height(16.dp))
-                                    HorizontalDivider(thickness = 1.dp, color = Color(0xFFCCCCCC))
-                                    Spacer(modifier = Modifier.height(16.dp))
-                                    Row(verticalAlignment = Alignment.CenterVertically) {
-                                        Text(
-                                            text = "Designed By: ",
-                                            color = Color.Black,
-                                            fontWeight = FontWeight.SemiBold,
-                                            fontSize = 18.sp,
-                                            textAlign = TextAlign.Left,
-                                        )
-                                        Text(
-                                            text = pattern.creatorname,
-                                            color = Color.Blue,
-                                            fontWeight = FontWeight.SemiBold,
-                                            fontSize = 18.sp,
-                                            textAlign = TextAlign.Left,
-                                            modifier = Modifier
-                                                .clickable {
-                                                    val openURL = Intent(Intent.ACTION_VIEW)
-                                                    openURL.data = Uri.parse(pattern.creatorlink)
-                                                    openLinkLauncher.launch(
-                                                        Intent.createChooser(
-                                                            openURL,
-                                                            "Open ${pattern.creatorname}'s website"
-                                                        )
-                                                    )
-                                                }
-                                        )
-                                        Spacer(modifier = Modifier.width(4.dp))
-                                        Icon(
-                                            tint = Color.Blue,
-                                            painter = painterResource(id = R.drawable.link),
-                                            contentDescription = null,
-                                            modifier = Modifier
-                                                .size(24.dp)
-                                                .clickable {
-                                                    val openURL = Intent(Intent.ACTION_VIEW)
-                                                    openURL.data = Uri.parse(pattern.creatorlink)
-                                                    openLinkLauncher.launch(
-                                                        Intent.createChooser(
-                                                            openURL,
-                                                            "Open ${pattern.creatorname}'s website"
-                                                        )
-                                                    )
-                                                }
-                                        )
-                                    }
-                                    Spacer(modifier = Modifier.height(16.dp))
-                                    HorizontalDivider(thickness = 1.dp, color = Color(0xFFCCCCCC))
-                                    Spacer(modifier = Modifier.height(16.dp))
-                                    Row(verticalAlignment = Alignment.CenterVertically) {
-                                        Text(
-                                            text = "Hook Size: ",
-                                            color = Color.Black,
-                                            fontWeight = FontWeight.SemiBold,
-                                            fontSize = 18.sp,
-                                            textAlign = TextAlign.Left,
-                                        )
-                                        Text(
-                                            text = pattern.hookSize.size,
-                                            color = Color.DarkGray,
-                                            fontWeight = FontWeight.Normal,
-                                            fontSize = 18.sp,
-                                            textAlign = TextAlign.Left
-                                        )
-                                    }
-                                    Spacer(modifier = Modifier.height(16.dp))
-                                    HorizontalDivider(thickness = 1.dp, color = Color(0xFFCCCCCC))
-                                    Spacer(modifier = Modifier.height(16.dp))
-                                    Row(verticalAlignment = Alignment.CenterVertically) {
-                                        Icon(
-                                            painter = painterResource(id = R.drawable.query_builder),
-                                            contentDescription = "Time to complete",
-                                            tint = AppPrimeThird,
-                                            modifier = Modifier.size(24.dp)
-                                        )
-                                        Spacer(modifier = Modifier.width(8.dp))
-                                        Text(
-                                            text = "Time to complete: ",
-                                            color = Color.Black,
-                                            fontWeight = FontWeight.SemiBold,
-                                            fontSize = 18.sp,
-                                            textAlign = TextAlign.Left,
-                                        )
-                                        Text(
-                                            text = pattern.timeToComplete,
-                                            color = Color.DarkGray,
-                                            fontWeight = FontWeight.Normal,
-                                            fontSize = 18.sp,
-                                            textAlign = TextAlign.Left
-                                        )
-
-                                    }
-
-                                }
-                                Text(
-                                    text = pattern.notes,
-                                    color = Color.Black,
-                                    fontWeight = FontWeight.Normal,
-                                    fontSize = 14.sp,
-                                    textAlign = TextAlign.Left
-                                )
-                            }
-
-                            1 -> {
-                                Column(
-                                    modifier = Modifier.padding(start = 16.dp, end = 16.dp),
-                                    horizontalAlignment = Alignment.Start
-                                ) {
-                                    Text(
-                                        text = "Materials needed for this project",
-                                        color = AppPrime,
-                                        fontFamily = Poppins,
-                                        fontWeight = FontWeight.Bold,
-                                        fontSize = 18.sp,
-                                        textAlign = TextAlign.Left,
-                                        style = TextStyle(
-                                            brush = Brush.linearGradient(
-                                                colors = listOf(
-                                                    AppPrime,
-                                                    AppPrimeSecond
-                                                )
-                                            )
-                                        )
-                                    )
-                                    Text(text = pattern.materials)
-                                }
-                            }
-
-                            2 -> {
-                                LazyColumn(modifier = Modifier.padding(start = 16.dp, end = 16.dp)) {
-                                    items(8) { step ->
-                                        Card(
-                                            modifier = Modifier
-                                                .background(Color.Transparent)
-                                                .fillMaxWidth()
-                                                .padding(bottom = 8.dp)
-                                                .shadow(4.dp, RoundedCornerShape(8.dp))
-                                        ) {
-                                            Row(
-                                                modifier = Modifier
-                                                    .background(
-                                                        Color.White,
-                                                        RoundedCornerShape(8.dp)
-                                                    )
-                                                    .fillMaxWidth()
-                                                    .padding(16.dp),
-                                                horizontalArrangement = Arrangement.SpaceBetween,
-                                                verticalAlignment = Alignment.CenterVertically
-                                            ) {
-                                                Text(
-                                                    text = "Step # ${step + 1}",
-                                                    color = Color.Black,
-                                                    fontWeight = FontWeight.Bold,
-                                                    fontSize = 18.sp
-                                                )
-                                                Icon(
-                                                    painter = painterResource(id = R.drawable.check_box),
-                                                    contentDescription = "Completed Step",
-                                                    tint = Color.Green,
-                                                )
-                                            }
-                                        }
-                                    }
-                                }
+                            0 -> {PagerPageZero(pattern, openLinkLauncher)}
+                            1 -> {PagerPageOne(pattern)}
+                            2 -> {PagerPageTwo()}
                             }
                         }
                     }
+                    // pager end
                 }
             }
         }
@@ -396,7 +152,7 @@ fun PatternPage(navController: NavController, patternName: String) {
             }
         }
     }
-}
+
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ImageCarousel(images: List<Int>, onClick: (Int) -> Unit) {
@@ -474,7 +230,6 @@ fun CustomPagerIndicator(
     circleRadius: Float = 20f,
     spacing: Float = 32f
 ) {
-
     val transition = updateTransition(pagerState.currentPage, label = "Page indicator transition")
     val offset by transition.animateFloat(
         transitionSpec = { tween(durationMillis = 500, easing = FastOutSlowInEasing) },
@@ -497,14 +252,291 @@ fun CustomPagerIndicator(
         drawCircle(activeColor, circleRadius, Offset(startX + offset, circleY))
     }
 }
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun PatternTabRow(pagerState: PagerState, scope: CoroutineScope) {
+    TabRow(
+        selectedTabIndex = pagerState.currentPage,
+        containerColor = Color.White,
+        contentColor = Color.Black,
+        indicator = { tabPositions ->
+            SecondaryIndicator(
+                modifier = Modifier.tabIndicatorOffset(tabPositions[pagerState.currentPage]),
+                color = AppPrimeSecond,
+            )
+        },
+        divider = { HorizontalDivider(thickness = 1.dp, color = Color.Gray) },
+    ) {
+        Tab(
+            text = { Text("Info", fontSize = 17.sp, fontWeight = FontWeight.Bold) },
+            selected = pagerState.currentPage == 0,
+            onClick = {
+                scope.launch {
+                    pagerState.animateScrollToPage(0)
+                }
+            }
+        )
+        Tab(
+            text = { Text("Materials", fontSize = 17.sp) },
+            selected = pagerState.currentPage == 1,
+            onClick = {
+                scope.launch {
+                    pagerState.animateScrollToPage(1)
+                }
+            }
+        )
+        Tab(
+            text = { Text("Instructions", fontSize = 17.sp) },
+            selected = pagerState.currentPage == 2,
+            onClick = {
+                scope.launch {
+                    pagerState.animateScrollToPage(2)
+                }
+            }
+        )
+    }
+}
+@Composable
+fun PagerPageZero(pattern: CrochetPattern, openLinkLauncher: ActivityResultLauncher<Intent>) {
+    Column(
+        horizontalAlignment = Alignment.Start, modifier = Modifier
+            .padding(start = 16.dp, end = 16.dp)
+    ) {
+        val difficultyColor = when (pattern.difficulty) {
+            Difficulty.BEGINNER -> Color.Green
+            Difficulty.EASY -> Color.Green
+            Difficulty.INTERMEDIATE -> Color.Blue
+            Difficulty.HARD -> Color.Red
+        }
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                text = pattern.name,
+                color = Color.Black,
+                fontWeight = FontWeight.Bold,
+                fontSize = 24.sp,
+                textAlign = TextAlign.Left,
+            )
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+        HorizontalDivider(thickness = 1.dp, color = Color(0xFFCCCCCC))
+        Spacer(modifier = Modifier.height(16.dp))
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                text = "Difficulty: ",
+                color = Color.Black,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 18.sp,
+                textAlign = TextAlign.Left,
+            )
+            Text(
+                text = "${pattern.difficulty}",
+                color = difficultyColor,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 18.sp,
+                textAlign = TextAlign.Left,
+            )
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+        HorizontalDivider(thickness = 1.dp, color = Color(0xFFCCCCCC))
+        Spacer(modifier = Modifier.height(16.dp))
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                text = "Designed By: ",
+                color = Color.Black,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 18.sp,
+                textAlign = TextAlign.Left,
+            )
+            Text(
+                text = pattern.creatorname,
+                color = Color.Blue,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 18.sp,
+                textAlign = TextAlign.Left,
+                modifier = Modifier
+                    .clickable {
+                        val openURL = Intent(Intent.ACTION_VIEW)
+                        openURL.data = Uri.parse(pattern.creatorlink)
+                        openLinkLauncher.launch(
+                            Intent.createChooser(
+                                openURL,
+                                "Open ${pattern.creatorname}'s website"
+                            )
+                        )
+                    }
+            )
+            Spacer(modifier = Modifier.width(4.dp))
+            Icon(
+                tint = Color.Blue,
+                painter = painterResource(id = R.drawable.link),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(24.dp)
+                    .clickable {
+                        val openURL = Intent(Intent.ACTION_VIEW)
+                        openURL.data = Uri.parse(pattern.creatorlink)
+                        openLinkLauncher.launch(
+                            Intent.createChooser(
+                                openURL,
+                                "Open ${pattern.creatorname}'s website"
+                            )
+                        )
+                    }
+            )
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+        HorizontalDivider(thickness = 1.dp, color = Color(0xFFCCCCCC))
+        Spacer(modifier = Modifier.height(16.dp))
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                text = "Hook Size: ",
+                color = Color.Black,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 18.sp,
+                textAlign = TextAlign.Left,
+            )
+            Text(
+                text = pattern.hookSize.size,
+                color = Color.DarkGray,
+                fontWeight = FontWeight.Normal,
+                fontSize = 18.sp,
+                textAlign = TextAlign.Left
+            )
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+        HorizontalDivider(thickness = 1.dp, color = Color(0xFFCCCCCC))
+        Spacer(modifier = Modifier.height(16.dp))
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Icon(
+                painter = painterResource(id = R.drawable.query_builder),
+                contentDescription = "Time to complete",
+                tint = AppPrimeThird,
+                modifier = Modifier.size(24.dp)
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                text = "Time to complete: ",
+                color = Color.Black,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 18.sp,
+                textAlign = TextAlign.Left,
+            )
+            Text(
+                text = pattern.timeToComplete,
+                color = Color.DarkGray,
+                fontWeight = FontWeight.Normal,
+                fontSize = 18.sp,
+                textAlign = TextAlign.Left
+            )
+        }
+    }
+    Text(
+        text = pattern.notes,
+        color = Color.Black,
+        fontWeight = FontWeight.Normal,
+        fontSize = 14.sp,
+        textAlign = TextAlign.Left
+    )
+}
+@Composable
+fun PagerPageOne(pattern: CrochetPattern) {
+    Column(
+        modifier = Modifier.padding(start = 16.dp, end = 16.dp),
+        horizontalAlignment = Alignment.Start
+    ) {
+        Text(
+            text = "Materials needed for this project",
+            color = AppPrime,
+            fontFamily = Poppins,
+            fontWeight = FontWeight.Bold,
+            fontSize = 18.sp,
+            textAlign = TextAlign.Left,
+            style = TextStyle(
+                brush = Brush.linearGradient(
+                    colors = listOf(
+                        AppPrime,
+                        AppPrimeSecond
+                    )
+                )
+            )
+        )
+        Text(text = pattern.materials)
+    }
+}
+@Composable
+fun PagerPageTwo() {
+    LazyColumn(modifier = Modifier.padding(start = 16.dp, end = 16.dp)) {
+        items(4) { step ->
+            Card(
+                modifier = Modifier
+                    .background(Color.Transparent)
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp)
+                    .shadow(4.dp, RoundedCornerShape(8.dp))
+            ) {
+                Row(
+                    modifier = Modifier
+                        .background(
+                            Color.White,
+                            RoundedCornerShape(8.dp)
+                        )
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Step # ${step + 1}",
+                        color = Color.Black,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp
+                    )
+                    Icon(
+                        painter = painterResource(id = R.drawable.check_box),
+                        contentDescription = "Completed Step",
+                        tint = Color.Green,
+                    )
+                }
+            }
+        }
+    }
+}
 
 @Preview
 @Composable
 fun ImageCarouselPreview() {
     ImageCarousel(images = listOf(R.drawable.amigurumi, R.drawable.b, R.drawable.c), onClick = {})
 }
-
+@OptIn(ExperimentalFoundationApi::class)
 @Preview
+@Composable
+fun PatternTabRowPreview() {
+    val pagerState = rememberPagerState(pageCount = { 3 })
+    val scope = rememberCoroutineScope()
+    PatternTabRow(pagerState, scope)
+}
+
+@Preview (showBackground = true)
+@Composable
+fun PagerPageZeroPreview() {
+    val openLinkLauncher = rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) { result -> }
+    val pattern = crochetPatterns.first() // Use the first pattern for preview
+    PagerPageZero(pattern, openLinkLauncher)
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PagerPageOnePreview() {
+    val pattern = crochetPatterns.first() // Use the first pattern for preview
+    PagerPageOne(pattern)
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PagerPageTwoPreview() {
+    PagerPageTwo()
+}
+@Preview(showBackground = true)
 @Composable
 fun PatternPagePreview() {
     val navController = rememberNavController()
