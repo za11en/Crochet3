@@ -20,8 +20,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import com.example.crochet3.viewModels.MainViewModel
 
-
-
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun Favorites(navController: NavController, mainViewModel: MainViewModel= viewModel()){

@@ -23,7 +23,6 @@ class PatternViewModel : ViewModel() {
         emit(patterns)
     }
 }
-
 //tools page viewmodel
 class ToolsViewModel : ViewModel() {
     val toolNames = listOf("Row Counter", "Unit Conversion", "UK-US", "Hook and Yarn Sizing", "Crochet Definitions")
@@ -33,7 +32,6 @@ class ToolsViewModel : ViewModel() {
         }
     }
 }
-
 //category page viewmodel
 class CategoryViewModel : ViewModel() {
     fun getCategories() = liveData(Dispatchers.IO) {
@@ -53,7 +51,6 @@ class CategoryViewModel : ViewModel() {
         emit(categories)
     }
 }
-
 //SearchPageViewModel
 class SearchViewModel : ViewModel() {
     private val _searchText = MutableStateFlow("")
@@ -63,7 +60,6 @@ class SearchViewModel : ViewModel() {
             crochetPatterns.filter { it.name.contains(searchText, ignoreCase = true) }
         }
         .asLiveData(Dispatchers.IO)
-
     // SortMenu data
     val sortItems = listOf("By Name", "By Difficulty")
     val checkedSortItems = mutableStateMapOf<String, Boolean>().apply {
@@ -71,15 +67,12 @@ class SearchViewModel : ViewModel() {
             this[label] = false
         }
     }
-
     // Add isFocused state
     private val _isFocused = MutableStateFlow(false)
     val isFocused = _isFocused.asLiveData(Dispatchers.IO)
-
     // Add expanded state for FilterMenu and SortMenu
     private val _isFilterMenuExpanded = MutableStateFlow(false)
     val isFilterMenuExpanded = _isFilterMenuExpanded.asLiveData(Dispatchers.IO)
-
     private val _isSortMenuExpanded = MutableStateFlow(false)
     val isSortMenuExpanded = _isSortMenuExpanded.asLiveData(Dispatchers.IO)
     fun setFocusedState(isFocused: Boolean) {
@@ -87,13 +80,11 @@ class SearchViewModel : ViewModel() {
             _isFocused.emit(isFocused)
         }
     }
-
     fun setFilterMenuExpandedState(isExpanded: Boolean) {
         viewModelScope.launch {
             _isFilterMenuExpanded.emit(isExpanded)
         }
     }
-
     fun setSortMenuExpandedState(isExpanded: Boolean) {
         viewModelScope.launch {
             _isSortMenuExpanded.emit(isExpanded)
@@ -106,7 +97,6 @@ class SearchViewModel : ViewModel() {
             this[label] = false
         }
     }
-
     fun setSearchText(newText: String) {
         viewModelScope.launch {
             _searchText.emit(newText)

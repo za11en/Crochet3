@@ -26,7 +26,6 @@ import com.example.crochet3.viewModels.PatternViewModel
 fun SubscreensCategories(navController: NavController, title: String) {
     val viewModel: PatternViewModel = viewModel()
     val patterns = viewModel.getPatternsByCategory(title).observeAsState(initial = emptyList())
-
     Scaffold(
         topBar = { TopAppBar(navController, title) },
         bottomBar = { BottomBar(navController) },

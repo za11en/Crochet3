@@ -23,7 +23,6 @@ enum class Screens(val route: String) {
     MISCELLANEOUS("miscellaneous"),
     ALL("all"),
 }
-
 data class CrochetPattern(
     val name: String,
     val newPattern: Boolean,
@@ -46,7 +45,6 @@ data class CrochetPattern(
             name,
             "$category",
             creatorname,
-
         )
         return matchingCombinations.any {
             it.contains(query, ignoreCase = true)
@@ -93,7 +91,6 @@ enum class HookSize(val size: String) {
     NINEPOINTFIVE("9.5mm"),
     TEN("10.0mm")
 }
-
 
 val crochetPatterns = listOf(
     CrochetPattern(

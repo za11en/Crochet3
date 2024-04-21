@@ -8,19 +8,14 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
-
 class MainViewModel:ViewModel() {
     val searchViewModel = SearchViewModel()
-
     private val _isFavorite =   MutableStateFlow(false)
     val isFavorite = _isFavorite.asStateFlow()
-
     private val _searchText = MutableStateFlow("")
     val searchText = _searchText.asStateFlow()
-
     private val _isSearching = MutableStateFlow(false)
     val isSearching = _isSearching.asStateFlow()
-
     private val _patterns = MutableStateFlow(listOf<CrochetPattern>())
     val patterns = searchText.combine(_patterns) { text, patterns ->
         if(text.isBlank()){
@@ -35,7 +30,6 @@ class MainViewModel:ViewModel() {
             viewModelScope,
             SharingStarted.WhileSubscribed(5000),
             _patterns.value
-
         )
     fun onSearchTextChange(text: String) {
         _searchText.value = text

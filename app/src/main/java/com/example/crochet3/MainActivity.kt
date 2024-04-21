@@ -66,7 +66,6 @@ import com.example.crochet3.ui.theme.Typography
 import com.example.crochet3.ui.theme.Poppins
 import com.example.crochet3.viewModels.MainViewModel
 
-
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -56,7 +56,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.crochet3.viewModels.SearchViewModel
 
-
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun SearchPage(navController: NavController,initialSearchText: String, searchViewModel: SearchViewModel = viewModel()) {
@@ -240,7 +239,6 @@ fun SortMenu(searchViewModel: SearchViewModel = viewModel()) {
             Text(text = "Filter by:") }
     }
 }
-
 
 @Composable
 fun FilterMenu(searchViewModel: SearchViewModel = viewModel()) {

@@ -268,7 +268,7 @@ fun ShareButton(onClick: () -> Unit, size : Int) {
             tint = Color.Black,
             contentDescription = "Share",
             modifier = Modifier
-                .padding(end = 6.dp)
+                .padding(end = 8.dp)
                 .size((size *.75).dp)
         )
     }
@@ -334,14 +334,11 @@ fun PatternCard(pattern:  CrochetPattern, navController: NavController) {
 fun BottomBarPreview() {
     BottomBar(navController = rememberNavController())
 }
-
-
 @Preview
 @Composable
 fun TopMenuPreview() {
     TopAppBar(navController = rememberNavController(), title = "Home")
 }
-
 @Preview
 @Composable
 fun PatternCardPreview() {
@@ -370,7 +367,6 @@ fun FavoriteButtonPreview() {
     val isFavorite = remember { mutableStateOf(false) }
     FavoriteButton(isFavorite = isFavorite, size = 100)
 }
-
 @Preview(showBackground = true)
 @Composable
 fun ShareButtonPreview() {

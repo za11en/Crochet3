@@ -79,7 +79,6 @@ import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 
-
 @OptIn(ExperimentalFoundationApi::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -181,7 +180,6 @@ fun ImageCarousel(images: List<Int>, onClick: (Int) -> Unit) {
             visible = indicatorVisible.value,
             enter = fadeIn(),
             exit = fadeOut(),
-
         ) {
             Box(
                 modifier = Modifier
@@ -235,12 +233,10 @@ fun CustomPagerIndicator(
         transitionSpec = { tween(durationMillis = 500, easing = FastOutSlowInEasing) },
         label = ""
     ) { page -> page * (circleRadius * 2 + spacing) }
-
     val animatedPage by animateIntAsState(
         targetValue = pagerState.currentPage,
         animationSpec = tween(durationMillis = 500, easing = FastOutSlowInEasing), label = ""
     )
-
     Canvas(modifier = modifier) {
         val circleY = size.height
         val totalWidth = pagerState.pageCount * (circleRadius * 2 + spacing) - spacing
@@ -515,7 +511,6 @@ fun PatternTabRowPreview() {
     val scope = rememberCoroutineScope()
     PatternTabRow(pagerState, scope)
 }
-
 @Preview (showBackground = true)
 @Composable
 fun PagerPageZeroPreview() {
@@ -523,14 +518,12 @@ fun PagerPageZeroPreview() {
     val pattern = crochetPatterns.first() // Use the first pattern for preview
     PagerPageZero(pattern, openLinkLauncher)
 }
-
 @Preview(showBackground = true)
 @Composable
 fun PagerPageOnePreview() {
     val pattern = crochetPatterns.first() // Use the first pattern for preview
     PagerPageOne(pattern)
 }
-
 @Preview(showBackground = true)
 @Composable
 fun PagerPageTwoPreview() {
