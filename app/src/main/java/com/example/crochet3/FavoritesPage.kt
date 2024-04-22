@@ -35,7 +35,7 @@ fun Favorites(navController: NavController, mainViewModel: MainViewModel= viewMo
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(2),
                     modifier = Modifier
-                        .padding(start = 10.dp, top = 20.dp, end = 10.dp, bottom = 80.dp)
+                        .padding(start = 10.dp, top = 16.dp, end = 10.dp, bottom = 80.dp)
                 ) {
                     items(crochetPatterns) { pattern ->
                         PatternCard(pattern, navController)

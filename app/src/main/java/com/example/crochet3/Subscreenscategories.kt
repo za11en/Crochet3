@@ -36,7 +36,7 @@ fun SubscreensCategories(navController: NavController, title: String) {
             WhiteCard {
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(2),
-                    modifier = Modifier.padding(start = 10.dp, top = 20.dp, end = 10.dp, bottom = 80.dp))
+                    modifier = Modifier.padding(start = 10.dp, top = 16.dp, end = 10.dp, bottom = 80.dp))
                 {
                     items(patterns.value) { pattern ->
                         PatternCard(pattern, navController)

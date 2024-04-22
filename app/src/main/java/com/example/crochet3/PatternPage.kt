@@ -20,6 +20,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.rememberTransformableState
 import androidx.compose.foundation.gestures.transformable
@@ -214,7 +215,6 @@ fun PagerNumberIndicator(pagerState: PagerState, modifier: Modifier = Modifier) 
             text = "${pagerState.currentPage + 1} / ${pagerState.pageCount}",
             color = Color.White,
             style = Typography.bodyLarge,
-            modifier = Modifier
         )
     }
 }
@@ -296,11 +296,11 @@ fun PatternTabRow(pagerState: PagerState, scope: CoroutineScope) {
 fun PagerPageZero(pattern: CrochetPattern, openLinkLauncher: ActivityResultLauncher<Intent>) {
     Column(
         horizontalAlignment = Alignment.Start, modifier = Modifier
-            .padding(start = 16.dp, end = 16.dp)
+            .padding(start = 16.dp, top = 16.dp,end = 16.dp)
     ) {
         val difficultyColor = when (pattern.difficulty) {
             Difficulty.BEGINNER -> Color.Green
-            Difficulty.EASY -> Color.Green
+            Difficulty.EASY -> Color.Cyan
             Difficulty.INTERMEDIATE -> Color.Blue
             Difficulty.HARD -> Color.Red
         }
@@ -313,28 +313,6 @@ fun PagerPageZero(pattern: CrochetPattern, openLinkLauncher: ActivityResultLaunc
                 textAlign = TextAlign.Left,
             )
         }
-        Spacer(modifier = Modifier.height(16.dp))
-        HorizontalDivider(thickness = 1.dp, color = Color(0xFFCCCCCC))
-        Spacer(modifier = Modifier.height(16.dp))
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(
-                text = "Difficulty: ",
-                color = Color.Black,
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 18.sp,
-                textAlign = TextAlign.Left,
-            )
-            Text(
-                text = "${pattern.difficulty}",
-                color = difficultyColor,
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 18.sp,
-                textAlign = TextAlign.Left,
-            )
-        }
-        Spacer(modifier = Modifier.height(16.dp))
-        HorizontalDivider(thickness = 1.dp, color = Color(0xFFCCCCCC))
-        Spacer(modifier = Modifier.height(16.dp))
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
                 text = "Designed By: ",
@@ -380,9 +358,24 @@ fun PagerPageZero(pattern: CrochetPattern, openLinkLauncher: ActivityResultLaunc
                     }
             )
         }
-        Spacer(modifier = Modifier.height(16.dp))
-        HorizontalDivider(thickness = 1.dp, color = Color(0xFFCCCCCC))
-        Spacer(modifier = Modifier.height(16.dp))
+        HorizontalDivider(thickness = 1.dp, color = Color(0xFFCCCCCC), modifier = Modifier.padding(top = 4.dp, bottom = 12.dp))
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                text = "Difficulty: ",
+                color = Color.Black,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 18.sp,
+                textAlign = TextAlign.Left,
+            )
+            Text(
+                text = "${pattern.difficulty}",
+                color = difficultyColor,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 18.sp,
+                textAlign = TextAlign.Left,
+            )
+        }
+        HorizontalDivider(thickness = 1.dp, color = Color(0xFFCCCCCC), modifier = Modifier.padding(top = 12.dp, bottom = 12.dp))
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
                 text = "Hook Size: ",
@@ -399,9 +392,7 @@ fun PagerPageZero(pattern: CrochetPattern, openLinkLauncher: ActivityResultLaunc
                 textAlign = TextAlign.Left
             )
         }
-        Spacer(modifier = Modifier.height(16.dp))
-        HorizontalDivider(thickness = 1.dp, color = Color(0xFFCCCCCC))
-        Spacer(modifier = Modifier.height(16.dp))
+        HorizontalDivider(thickness = 1.dp, color = Color(0xFFCCCCCC), modifier = Modifier.padding(top = 12.dp, bottom = 12.dp))
         Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(
                 painter = painterResource(id = R.drawable.query_builder),
@@ -425,6 +416,7 @@ fun PagerPageZero(pattern: CrochetPattern, openLinkLauncher: ActivityResultLaunc
                 textAlign = TextAlign.Left
             )
         }
+        HorizontalDivider(thickness = 1.dp, color = Color(0xFFCCCCCC), modifier = Modifier.padding(top = 12.dp, bottom = 12.dp))
     }
     Text(
         text = pattern.notes,
@@ -437,7 +429,7 @@ fun PagerPageZero(pattern: CrochetPattern, openLinkLauncher: ActivityResultLaunc
 @Composable
 fun PagerPageOne(pattern: CrochetPattern) {
     Column(
-        modifier = Modifier.padding(start = 16.dp, end = 16.dp),
+        modifier = Modifier.padding(16.dp),
         horizontalAlignment = Alignment.Start
     ) {
         Text(
@@ -447,28 +439,21 @@ fun PagerPageOne(pattern: CrochetPattern) {
             fontWeight = FontWeight.Bold,
             fontSize = 18.sp,
             textAlign = TextAlign.Left,
-            style = TextStyle(
-                brush = Brush.linearGradient(
-                    colors = listOf(
-                        AppPrime,
-                        AppPrimeSecond
-                    )
-                )
-            )
         )
         Text(text = pattern.materials)
     }
 }
 @Composable
 fun PagerPageTwo() {
-    LazyColumn(modifier = Modifier.padding(start = 16.dp, end = 16.dp)) {
+    LazyColumn(modifier = Modifier.padding(16.dp)) {
         items(4) { step ->
             Card(
                 modifier = Modifier
                     .background(Color.Transparent)
                     .fillMaxWidth()
                     .padding(bottom = 8.dp)
-                    .shadow(4.dp, RoundedCornerShape(8.dp))
+                    .border(1.dp, Color.LightGray, RoundedCornerShape(16.dp))
+                    .shadow(4.dp, RoundedCornerShape(20.dp))
             ) {
                 Row(
                     modifier = Modifier

@@ -224,9 +224,10 @@ fun appGradient(): Brush {
 @Composable
 fun WhiteCard(content: @Composable () -> Unit) {
     Card(
+        shape = RoundedCornerShape(20.dp, 20.dp, 0.dp, 0.dp),
         colors = CardDefaults.cardColors(Color.White),
         modifier = Modifier
-            .background(Color.Transparent, RoundedCornerShape(36.dp, 36.dp, 0.dp, 0.dp))
+            .background(Color.Transparent, RoundedCornerShape(0.dp, 36.dp, 0.dp, 0.dp))
             .shadow(elevation = 40.dp)
             .fillMaxSize()
             .fillMaxWidth()
@@ -250,7 +251,7 @@ fun FavoriteButton(isFavorite: MutableState<Boolean>, size: Int) {
             contentDescription = if (isFavorite.value) "Remove from favorites" else "Add to favorites",
             modifier = Modifier
                 .padding(top = 2.dp)
-                .size((size *.75).dp)
+                .size((size *.70).dp)
         )
     }
 }
@@ -269,7 +270,7 @@ fun ShareButton(onClick: () -> Unit, size : Int) {
             contentDescription = "Share",
             modifier = Modifier
                 .padding(end = 8.dp)
-                .size((size *.75).dp)
+                .size((size *.70).dp)
         )
     }
 }
@@ -327,7 +328,6 @@ fun PatternCard(pattern:  CrochetPattern, navController: NavController) {
         }
     }
 }
-
 
 @Preview
 @Composable

@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Build
 import androidx.compose.material.icons.outlined.FavoriteBorder
@@ -20,6 +21,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationDrawerItem
+import androidx.compose.material3.NavigationDrawerItemColors
+import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
@@ -64,7 +67,7 @@ fun Drawer () {
                         .width(36.dp) ) },
                     label = { Text(text = "Home", fontSize = 18.sp, fontWeight = FontWeight.Bold, lineHeight = 24.sp, modifier = Modifier.padding(start = 16.dp)) },
                     selected = false,
-                    modifier = Modifier.padding(top = 16.dp),
+                    modifier = Modifier.padding(top = 16.dp, start = 16.dp),
                     onClick = {}
                 )
                 NavigationDrawerItem(
@@ -73,7 +76,7 @@ fun Drawer () {
                         .width(36.dp)) },
                     label = { Text(text = "Favorites", fontSize = 18.sp, fontWeight = FontWeight.Bold, lineHeight = 24.sp, modifier = Modifier.padding(start = 16.dp)) },
                     selected = false,
-                    modifier = Modifier.padding(top = 8.dp),
+                    modifier = Modifier.padding(top = 12.dp, start = 16.dp),
                     onClick = {}
                 )
                 NavigationDrawerItem(
@@ -82,7 +85,7 @@ fun Drawer () {
                         .width(36.dp)) } ,
                     label = { Text(text = "Search", fontSize = 18.sp, fontWeight = FontWeight.Bold, lineHeight = 24.sp, modifier = Modifier.padding(start = 16.dp)) },
                     selected = false,
-                    modifier = Modifier.padding(top = 8.dp),
+                    modifier = Modifier.padding(top = 12.dp, start = 16.dp),
                     onClick = {}
                 )
                 NavigationDrawerItem(
@@ -91,7 +94,7 @@ fun Drawer () {
                         .width(36.dp)) } ,
                     label = { Text(text = "Patterns", fontSize = 18.sp, fontWeight = FontWeight.Bold, lineHeight = 24.sp, modifier = Modifier.padding(start = 16.dp)) },
                     selected = false,
-                    modifier = Modifier.padding(top = 8.dp),
+                    modifier = Modifier.padding(top = 12.dp, start = 16.dp),
                     onClick = {}
                 )
                 NavigationDrawerItem(
@@ -100,17 +103,19 @@ fun Drawer () {
                         .width(36.dp)) } ,
                     label = { Text(text = "Tools", fontSize = 18.sp, fontWeight = FontWeight.Bold, lineHeight = 24.sp, modifier = Modifier.padding(start = 16.dp)) },
                     selected = false,
-                    modifier = Modifier.padding(top = 8.dp),
+                    modifier = Modifier.padding(top = 12.dp, start = 16.dp),
                     onClick = {}
                 )
-                HorizontalDivider(color = Color.LightGray, thickness = 1.dp, modifier = Modifier.padding(start = 16.dp, top = 8.dp, end=16.dp, bottom = 8.dp))
+                HorizontalDivider(color = Color.LightGray, thickness = 1.dp, modifier = Modifier.padding(start = 16.dp, top = 12.dp, end=16.dp, bottom = 8.dp))
                 NavigationDrawerItem(
                     icon = { Icon(Icons.Outlined.Info, contentDescription = "Localized description", modifier = Modifier
                         .fillMaxHeight(1f)
                         .width(36.dp)) } ,
                     label = { Text(text = "Info", fontSize = 18.sp, fontWeight = FontWeight.Bold, lineHeight = 24.sp, modifier = Modifier.padding(start = 16.dp)) },
                     selected = false,
-                    modifier = Modifier.padding(top = 8.dp),
+                    modifier = Modifier
+                        .padding(top = 12.dp, start = 16.dp)
+                        .background(Color.Blue, shape = RoundedCornerShape(20.dp, 0.dp, 0.dp, 20.dp )),
                     onClick = {}
                 )
             }

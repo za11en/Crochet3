@@ -116,7 +116,7 @@ fun MainContent(navController: NavController) {
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier
-                    .padding(start = 16.dp, top = 32.dp, bottom = 24.dp, end = 24.dp)
+                    .padding(start = 16.dp, top = 24.dp, bottom = 24.dp, end = 24.dp)
                     .fillMaxWidth()
             ) {
                 Text(
@@ -139,7 +139,6 @@ fun MainContent(navController: NavController) {
                         .clickable { navController.navigate("appinfo") }
                 )
             }
-
             //Search bar
             Surface(
                 color = Color(0xFFFFFFFF), shape = RoundedCornerShape(10.dp),
@@ -302,7 +301,7 @@ fun MainContent(navController: NavController) {
                             style = Typography.titleSmall,
                             color = Color.White,
                             modifier = Modifier
-                                .padding(bottom = 0.dp)
+                                .padding(top = 4.dp)
                                 .fillMaxWidth(1f)
                         )
                     }
@@ -315,12 +314,11 @@ fun MainContent(navController: NavController) {
                         fontFamily = Poppins,
                         lineHeight = 20.sp,
                         color = AppPrime,
-                        fontSize = 22.sp,
+                        fontSize = 20.sp,
                         fontWeight = FontWeight.SemiBold,
                         modifier = Modifier.padding(
-                            top = 24.dp,
+                            top = 20.dp,
                             start = 20.dp,
-                            bottom = 2.dp,
                             end = 10.dp
                         ),
                         style = TextStyle(
@@ -335,7 +333,7 @@ fun MainContent(navController: NavController) {
                     LazyVerticalGrid(
                         columns = GridCells.Fixed(2),
                         modifier = Modifier
-                            .padding(start = 10.dp, top = 6.dp, end = 10.dp, bottom = 80.dp)
+                            .padding(start = 10.dp, top = 8.dp, end = 10.dp, bottom = 80.dp)
                     ) {
                         items(crochetPatterns) { pattern ->
                             PatternCard(pattern, navController)
