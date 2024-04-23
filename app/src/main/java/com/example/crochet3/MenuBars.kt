@@ -14,10 +14,12 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.GenericShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Icon
@@ -281,21 +283,36 @@ fun ShareButton(onClick: () -> Unit, size : Int) {
 
 @Composable
 fun NewRibbon() {
+    val ribbonShape = GenericShape { size, _ ->
+        moveTo(0f, 0f)
+        lineTo(size.width/2f, size.height/3f)
+        lineTo(size.width/2f, 0f)
+    }
     Column(
         verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
-            .padding(top = 24.dp)
             .background(Color.Red)
-            .size(52.dp, 20.dp)
+            .size(44.dp, 22.dp)
+
     ) {
         Text(
             text = "New",
             color = Color.White,
             fontSize = 14.sp,
             fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(start = 8.dp, end = 12.dp)
+            modifier = Modifier.padding(start = 2.dp)
         )
     }
+    Box(
+        modifier = Modifier
+            .padding(top = 22.dp)
+            .size(20.dp)
+            .clip(ribbonShape)
+            .background(Color(0xFF990000))
+
+    )
+
 }
 @Composable
 fun PatternCard(pattern: CrochetPattern, navController: NavController) {
@@ -344,7 +361,8 @@ fun PatternCard(pattern: CrochetPattern, navController: NavController) {
                 }
             }
         }
-        Box()
+        Box( modifier = Modifier
+            .offset(x = (-4).dp, y = 20.dp))
         {
                 NewRibbon()
         }
@@ -355,6 +373,7 @@ fun PatternCard(pattern: CrochetPattern, navController: NavController) {
         }
     }
 }
+
 
 @Preview
 @Composable

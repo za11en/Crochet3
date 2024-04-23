@@ -311,7 +311,7 @@ fun MainContent(navController: NavController) {
             WhiteCard {
                 Column(modifier = Modifier.background(Color.White)) {
                     Text(
-                        text = "Featured Patterns",
+                        text = "New Patterns",
                         fontFamily = Poppins,
                         lineHeight = 20.sp,
                         color = AppPrime,
