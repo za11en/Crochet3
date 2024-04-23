@@ -41,7 +41,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -59,16 +58,15 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.window.Dialog
 import com.example.crochet3.ui.theme.AppPrime
 import com.example.crochet3.ui.theme.AppPrimeSecond
 import com.example.crochet3.ui.theme.AppPrimeThird
-import com.example.crochet3.ui.theme.Poppins
 import com.example.crochet3.ui.theme.Typography
 import kotlinx.coroutines.launch
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.material3.Card
 import androidx.compose.runtime.LaunchedEffect
@@ -77,6 +75,9 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
+import com.example.crochet3.Data.CrochetPattern
+import com.example.crochet3.Data.Difficulty
+import com.example.crochet3.Data.crochetPatterns
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 
@@ -299,10 +300,10 @@ fun PagerPageZero(pattern: CrochetPattern, openLinkLauncher: ActivityResultLaunc
             .padding(start = 16.dp, top = 16.dp,end = 16.dp)
     ) {
         val difficultyColor = when (pattern.difficulty) {
-            Difficulty.BEGINNER -> Color.Green
+            Difficulty.BASIC -> Color.Green
             Difficulty.EASY -> Color.Cyan
             Difficulty.INTERMEDIATE -> Color.Blue
-            Difficulty.HARD -> Color.Red
+            Difficulty.COMPLEX -> Color.Red
         }
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
@@ -434,19 +435,20 @@ fun PagerPageOne(pattern: CrochetPattern) {
     ) {
         Text(
             text = "Materials needed for this project",
-            color = AppPrime,
-            fontFamily = Poppins,
+            color = Color.Black,
             fontWeight = FontWeight.Bold,
             fontSize = 18.sp,
             textAlign = TextAlign.Left,
         )
+        HorizontalDivider(thickness = 1.dp, color = Color(0xFFCCCCCC), modifier = Modifier.padding(top = 12.dp, bottom = 12.dp))
         Text(text = pattern.materials)
     }
 }
 @Composable
 fun PagerPageTwo() {
+    val steps = List(4) {remember { mutableStateOf(false) }}
     LazyColumn(modifier = Modifier.padding(16.dp)) {
-        items(4) { step ->
+        items(steps) { isComplete ->
             Card(
                 modifier = Modifier
                     .background(Color.Transparent)
@@ -467,15 +469,17 @@ fun PagerPageTwo() {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "Step # ${step + 1}",
+                        text = "Step # ${steps.indexOf(isComplete) + 1}",
                         color = Color.Black,
                         fontWeight = FontWeight.Bold,
                         fontSize = 18.sp
                     )
                     Icon(
-                        painter = painterResource(id = R.drawable.check_box),
+                        painter = painterResource(
+                            id = if (isComplete.value) R.drawable.check_box else R.drawable.checkboxempty),
                         contentDescription = "Completed Step",
-                        tint = Color.Green,
+                        tint = if (isComplete.value) Color.Green else Color.Gray,
+                        modifier = Modifier.clickable { isComplete.value = !isComplete.value }
                     )
                 }
             }

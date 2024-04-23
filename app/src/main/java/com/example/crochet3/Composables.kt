@@ -21,8 +21,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationDrawerItem
-import androidx.compose.material3.NavigationDrawerItemColors
-import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
@@ -59,7 +57,7 @@ fun Drawer () {
                         )
                     )) {
                     Text("Crochet App", color = Color.White,  modifier = Modifier
-                        .padding(top = 40.dp, start = 20.dp), style = Typography.titleLarge)
+                        .padding(top = 40.dp, start = 32.dp), style = Typography.titleLarge)
                 }
                 NavigationDrawerItem(
                     icon = { Icon(Icons.Outlined.Home, contentDescription = "Localized description", modifier = Modifier

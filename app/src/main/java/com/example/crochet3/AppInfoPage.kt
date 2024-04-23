@@ -27,55 +27,59 @@ fun AppInfo(navController: NavController) {
         modifier = Modifier
             .background(appGradient()))
     {
-        Column(
-            modifier = Modifier.padding(top = 100.dp)) {
-            WhiteCard {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    Text(
-                        text = "Crochet Patterns",
-                        color = Color.DarkGray,
-                        style = Typography.bodyLarge,
-                        modifier = Modifier.padding(top = 32.dp)
-                    )
-                    Text(
-                        text = "Version 1.0",
-                        color = Color.DarkGray,
-                        style = Typography.bodyLarge,
-                        modifier = Modifier.padding(top = 16.dp)
-                    )
-                    Text(
-                        text = "Developed by: Zack Allinson",
-                        color = Color.DarkGray,
-                        style = Typography.bodyLarge,
-                        modifier = Modifier.padding(top = 48.dp)
-                    )
-                    Text(
-                        text = "Owned and Operated by: Portkey Media",
-                        color = Color.DarkGray,
-                        style = Typography.bodyLarge,
-                        modifier = Modifier.padding(top = 16.dp)
-                    )
-                    Text(
-                        text = "Contact:",
-                        color = Color.DarkGray,
-                        style = Typography.bodyLarge,
-                        modifier = Modifier.padding(top = 32.dp)
-                    )
-                    Text(
-                        text = "info@portkey.ca",
-                        color = Color.Blue,
-                        style = Typography.bodyLarge,
-                        modifier = Modifier.padding(top = 16.dp)
-                    )
-                }
+        AppInfoContent()
+    }
+}
+
+@Composable
+fun AppInfoContent() {
+    Column(
+        modifier = Modifier.padding(top = 100.dp)) {
+        WhiteCard {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.fillMaxSize()
+            ) {
+                Text(
+                    text = "Crochet Patterns",
+                    color = Color.DarkGray,
+                    style = Typography.bodyLarge,
+                    modifier = Modifier.padding(top = 32.dp)
+                )
+                Text(
+                    text = "Version 1.0",
+                    color = Color.DarkGray,
+                    style = Typography.bodyLarge,
+                    modifier = Modifier.padding(top = 16.dp)
+                )
+                Text(
+                    text = "Developed by: Zack Allinson",
+                    color = Color.DarkGray,
+                    style = Typography.bodyLarge,
+                    modifier = Modifier.padding(top = 48.dp)
+                )
+                Text(
+                    text = "Owned and Operated by: Portkey Media",
+                    color = Color.DarkGray,
+                    style = Typography.bodyLarge,
+                    modifier = Modifier.padding(top = 16.dp)
+                )
+                Text(
+                    text = "Contact:",
+                    color = Color.DarkGray,
+                    style = Typography.bodyLarge,
+                    modifier = Modifier.padding(top = 32.dp)
+                )
+                Text(
+                    text = "info@portkey.ca",
+                    color = Color.Blue,
+                    style = Typography.bodyLarge,
+                    modifier = Modifier.padding(top = 16.dp)
+                )
             }
         }
     }
 }
-
 @Preview
 @Composable
 fun AppInfoPreview() {

@@ -57,6 +57,10 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.crochet3.Data.Category
+import com.example.crochet3.Data.CrochetPattern
+import com.example.crochet3.Data.Difficulty
+import com.example.crochet3.Data.HookSize
 import com.example.crochet3.ui.theme.AppPrime
 import com.example.crochet3.ui.theme.AppPrimeSecond
 import com.example.crochet3.ui.theme.AppPrimeThird
@@ -274,8 +278,27 @@ fun ShareButton(onClick: () -> Unit, size : Int) {
         )
     }
 }
+
 @Composable
-fun PatternCard(pattern:  CrochetPattern, navController: NavController) {
+fun NewRibbon() {
+    Column(
+        verticalArrangement = Arrangement.Center,
+        modifier = Modifier
+            .padding(top = 24.dp)
+            .background(Color.Red)
+            .size(52.dp, 20.dp)
+    ) {
+        Text(
+            text = "New",
+            color = Color.White,
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(start = 8.dp, end = 12.dp)
+        )
+    }
+}
+@Composable
+fun PatternCard(pattern: CrochetPattern, navController: NavController) {
     val isFavorite = remember { mutableStateOf(false) }
     Box {
         Card(modifier = Modifier
@@ -320,6 +343,10 @@ fun PatternCard(pattern:  CrochetPattern, navController: NavController) {
                     )
                 }
             }
+        }
+        Box()
+        {
+                NewRibbon()
         }
         Row( modifier = Modifier
             .width(getScreenWidth() /2)
@@ -371,6 +398,12 @@ fun FavoriteButtonPreview() {
 @Composable
 fun ShareButtonPreview() {
     ShareButton(onClick = {}, size = 100)
+}
+
+@Preview (showBackground = true)
+@Composable
+fun NewRibbonPreview() {
+    NewRibbon()
 }
 @Preview
 @Composable

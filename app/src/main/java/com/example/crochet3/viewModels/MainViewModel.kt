@@ -2,7 +2,7 @@ package com.example.crochet3.viewModels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.crochet3.CrochetPattern
+import com.example.crochet3.Data.CrochetPattern
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow

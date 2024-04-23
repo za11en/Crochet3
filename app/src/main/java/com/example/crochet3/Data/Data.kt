@@ -1,4 +1,6 @@
-package com.example.crochet3
+package com.example.crochet3.Data
+
+import com.example.crochet3.R
 
 
 enum class Screens(val route: String) {
@@ -53,10 +55,10 @@ data class CrochetPattern(
 }
 
 enum class Difficulty {
-    BEGINNER,
+    BASIC,
     EASY,
     INTERMEDIATE,
-    HARD,
+    COMPLEX,
 }
 
 enum class Category {
@@ -113,7 +115,7 @@ val crochetPatterns = listOf(
         name = "Flower Hat 2",
         newPattern = true,
         featured = true,
-        difficulty = Difficulty.HARD,
+        difficulty = Difficulty.COMPLEX,
         hookSize = HookSize.FIVE,
         category = Category.HATS,
         creatorname = "Anonymous",
@@ -177,7 +179,7 @@ val crochetPatterns = listOf(
         name = "Pattern 14",
         newPattern = true,
         featured = true,
-        difficulty = Difficulty.HARD,
+        difficulty = Difficulty.COMPLEX,
         hookSize = HookSize.FIVE,
         category = Category.COASTERS,
         creatorname = "Anonymous",

@@ -18,6 +18,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
+import com.example.crochet3.Data.crochetPatterns
 import com.example.crochet3.viewModels.MainViewModel
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
