@@ -31,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
@@ -183,7 +184,7 @@ fun BottomBar(navController: NavController) {
                 BottomBarItem(navController, currentRoute, "main", Icons.Filled.Home, "Home")
                 BottomBarItem(navController, currentRoute, "favorites", Icons.Filled.Favorite, "Favorites")
                 BottomBarItem(navController, currentRoute, "searchPage", Icons.Filled.Search, "Search")
-                BottomBarItem(navController, currentRoute, "tools", Icons.Filled.Build, "Tools")
+                BottomBarItem(navController, currentRoute, "myProjects", Icons.Filled.AccountCircle, "My Projects")
                 BottomBarItem(navController, currentRoute, "categoriesScreen", Icons.Filled.Menu, "Patterns")
             }
         }
@@ -558,7 +559,8 @@ fun PatternCardPreview() {
         "test",
         "test",
         "test",
-        "")
+        3,
+        "test")
     val navController = rememberNavController()
     PatternCard(navController = navController, pattern =  previewtest)
 }

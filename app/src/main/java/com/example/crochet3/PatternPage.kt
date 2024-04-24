@@ -111,7 +111,7 @@ fun PatternPage(navController: NavController, patternName: String) {
                         when (page) {
                             0 -> {PagerPageZero(pattern, openLinkLauncher)}
                             1 -> {PagerPageOne(pattern)}
-                            2 -> {PagerPageTwo()}
+                            2 -> {PagerPageTwo(pattern, navController)}
                             }
                         }
                     }
@@ -477,8 +477,8 @@ fun PagerPageOne(pattern: CrochetPattern) {
     }
 }
 @Composable
-fun PagerPageTwo() {
-    val steps = List(4) {remember { mutableStateOf(false) }}
+fun PagerPageTwo(pattern:CrochetPattern, navController: NavController) {
+    val steps = List(pattern.steps) { remember { mutableStateOf(false) } }
     LazyColumn(
         modifier = Modifier.padding(start = 16.dp, end = 16.dp),
         verticalArrangement = Arrangement.Top
@@ -491,6 +491,7 @@ fun PagerPageTwo() {
                     .padding(bottom = 8.dp)
                     .border(1.dp, Color.LightGray, RoundedCornerShape(16.dp))
                     .shadow(4.dp, RoundedCornerShape(20.dp))
+                    .clickable { navController.navigate("MyProjects") }
             ) {
                 Row(
                     modifier = Modifier
@@ -551,7 +552,8 @@ fun PagerPageOnePreview() {
 @Preview(showBackground = true)
 @Composable
 fun PagerPageTwoPreview() {
-    PagerPageTwo()
+    val navController = rememberNavController()
+    PagerPageTwo(crochetPatterns.first(), navController) // Use the first pattern for preview
 }
 @Preview(showBackground = true)
 @Composable

@@ -37,7 +37,7 @@ fun AppNavHost() {
             val patternName = backStackEntry.arguments?.getString("patternName")
             PatternPage(navController, patternName ?: "")
         }
-        composable(Screens.TOOLS.route) { Tools(navController) }
+        composable(Screens.MYPROJECTS.route) { MyProjects(navController) }
         composable(Screens.APPINFO.route) { AppInfo(navController) }
         composable(Screens.ALL.route) { All() }
     }

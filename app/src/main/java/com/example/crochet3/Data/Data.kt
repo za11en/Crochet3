@@ -24,6 +24,7 @@ enum class Screens(val route: String) {
     DECOR("decor"),
     MISCELLANEOUS("miscellaneous"),
     ALL("all"),
+    MYPROJECTS("myProjects"),
 }
 data class CrochetPattern(
     val name: String,
@@ -39,6 +40,7 @@ data class CrochetPattern(
     val notes: String,
     val timeToComplete: String,
     val materials: String,
+    val steps: Int,
     val instructions: String,
 ) {
     fun doesMatchSearchQuery(query:String): Boolean {
@@ -108,6 +110,7 @@ val crochetPatterns = listOf(
         notes= "None",
         timeToComplete = "1 Hour",
         materials = "None",
+        steps = 4,
         instructions = "add instructions here add instructions here add instructions here add instructions here"),
     CrochetPattern(
         name = "Flower Hat 2",
@@ -123,6 +126,7 @@ val crochetPatterns = listOf(
         notes= "None",
         timeToComplete = "1 Hour",
         materials = "None",
+        steps = 4,
         instructions = "add instructions here add instructions here add instructions here add instructions here" ),
     CrochetPattern(
         name = "Stripe Hat",
@@ -138,6 +142,7 @@ val crochetPatterns = listOf(
         notes= "None",
         timeToComplete = "1 Hour",
         materials = "None",
+        steps = 3,
         instructions = "add instructions here add instructions here add instructions here add instructions here"),
     CrochetPattern(
         name = "Bunny Ears",
@@ -153,6 +158,7 @@ val crochetPatterns = listOf(
         notes= "None",
         timeToComplete = "1 Hour",
         materials = "None",
+        steps = 3,
         instructions = "add instructions here add instructions here add instructions here add instructions here" ),
     CrochetPattern(
         name = "Pattern 14",
@@ -168,5 +174,6 @@ val crochetPatterns = listOf(
         notes= "None",
         timeToComplete = "1 Hour",
         materials = "None",
+        steps = 3,
         instructions = "add instructions here add instructions here add instructions here add instructions here" ),
 )

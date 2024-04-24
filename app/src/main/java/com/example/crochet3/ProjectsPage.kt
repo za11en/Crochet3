@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.rememberDrawerState
@@ -20,12 +19,12 @@ import androidx.navigation.compose.rememberNavController
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun Tools(navController: NavController) {
+fun MyProjects(navController: NavController) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     Drawer(navController, drawerState, scope) {
         Scaffold(
-            topBar = { TopAppBar(navController, "Tools", drawerState, scope) },
+            topBar = { TopAppBar(navController, "My Projects", drawerState, scope) },
             bottomBar = { BottomBar(navController) },
             containerColor = Color.Transparent,
             modifier = Modifier.background(appGradient())
@@ -40,8 +39,8 @@ fun Tools(navController: NavController) {
 
 @Preview
 @Composable
-fun ToolsPreview() {
+fun MyProjectsPreview() {
     val navController = rememberNavController()
-    Tools(navController)
+    MyProjects(navController)
 }
 
