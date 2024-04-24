@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -27,10 +28,21 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.outlined.FavoriteBorder
+import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.Card
+import androidx.compose.material3.DrawerState
+import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.ModalDrawerSheet
+import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -47,8 +59,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.crochet3.ui.theme.Crochet3Theme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.SolidColor
@@ -66,6 +80,8 @@ import com.example.crochet3.ui.theme.AppPrimeThird
 import com.example.crochet3.ui.theme.Typography
 import com.example.crochet3.ui.theme.Poppins
 import com.example.crochet3.viewModels.MainViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -86,15 +102,15 @@ class MainActivity : ComponentActivity() {
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun MainScreen(navController: NavController) {
-    Scaffold(
-        bottomBar = { BottomBar(navController) }
-    ) {
-        MainContent(navController)
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val scope = rememberCoroutineScope()
+    Drawer(navController, drawerState, scope) {
+        MainContent(navController, drawerState, scope)
     }
-}
 
+}
 @Composable
-fun MainContent(navController: NavController) {
+fun MainContent(navController: NavController, drawerState: DrawerState, scope: CoroutineScope) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -131,13 +147,13 @@ fun MainContent(navController: NavController) {
                         .fillMaxWidth(.8f)
                 )
                 Icon(
-                    painter = painterResource(id = R.drawable.help_outline),
+                    Icons.Filled.Menu,
                     contentDescription = "help icon",
-                    tint = AppPrimeThird,
+                    tint = Color.White,
                     modifier = Modifier
                         .size(32.dp)
                         .padding(top = 2.dp)
-                        .clickable { navController.navigate("appinfo") }
+                        .clickable { scope.launch { drawerState.open() } }
                 )
             }
             //Search bar
@@ -262,7 +278,7 @@ fun MainContent(navController: NavController) {
                 R.drawable.f,
                 R.drawable.amigurumi,
                 R.drawable.socks,
-                R.drawable.blanket   /* add more image IDs here */
+                R.drawable.c   /* add more image IDs here */
             )
             LazyRow(modifier = Modifier.padding(start = 16.dp)) {
                 itemsIndexed(
@@ -336,7 +352,8 @@ fun MainContent(navController: NavController) {
                         modifier = Modifier
                             .padding(start = 10.dp, top = 8.dp, end = 10.dp, bottom = 80.dp)
                     ) {
-                        items(crochetPatterns) { pattern ->
+                        val newPatterns = crochetPatterns.filter { it.newPattern }
+                        items(newPatterns) { pattern ->
                             PatternCard(pattern, navController)
                         }
                     }

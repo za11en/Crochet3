@@ -296,8 +296,9 @@ fun PatternTabRow(pagerState: PagerState, scope: CoroutineScope) {
 @Composable
 fun PagerPageZero(pattern: CrochetPattern, openLinkLauncher: ActivityResultLauncher<Intent>) {
     Column(
+        verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.Start, modifier = Modifier
-            .padding(start = 16.dp, top = 16.dp,end = 16.dp)
+            .padding(start = 16.dp, end = 16.dp)
     ) {
         val difficultyColor = when (pattern.difficulty) {
             Difficulty.BASIC -> Color.Green
@@ -359,8 +360,15 @@ fun PagerPageZero(pattern: CrochetPattern, openLinkLauncher: ActivityResultLaunc
                     }
             )
         }
-        HorizontalDivider(thickness = 1.dp, color = Color(0xFFCCCCCC), modifier = Modifier.padding(top = 4.dp, bottom = 12.dp))
+        HorizontalDivider(thickness = 1.dp, color = Color.Blue, modifier = Modifier.padding(top = 12.dp, bottom = 12.dp))
         Row(verticalAlignment = Alignment.CenterVertically) {
+            Icon(
+                painter = painterResource(id = R.drawable.query_builder),
+                contentDescription = "Time to complete",
+                tint = AppPrimeThird,
+                modifier = Modifier.size(24.dp)
+            )
+            Spacer(modifier = Modifier.width(8.dp))
             Text(
                 text = "Difficulty: ",
                 color = Color.Black,
@@ -371,13 +379,20 @@ fun PagerPageZero(pattern: CrochetPattern, openLinkLauncher: ActivityResultLaunc
             Text(
                 text = "${pattern.difficulty}",
                 color = difficultyColor,
-                fontWeight = FontWeight.SemiBold,
+                fontWeight = FontWeight.Bold,
                 fontSize = 18.sp,
                 textAlign = TextAlign.Left,
             )
         }
         HorizontalDivider(thickness = 1.dp, color = Color(0xFFCCCCCC), modifier = Modifier.padding(top = 12.dp, bottom = 12.dp))
         Row(verticalAlignment = Alignment.CenterVertically) {
+            Icon(
+                painter = painterResource(id = R.drawable.query_builder),
+                contentDescription = "Time to complete",
+                tint = AppPrimeThird,
+                modifier = Modifier.size(24.dp)
+            )
+            Spacer(modifier = Modifier.width(8.dp))
             Text(
                 text = "Hook Size: ",
                 color = Color.Black,
@@ -418,20 +433,37 @@ fun PagerPageZero(pattern: CrochetPattern, openLinkLauncher: ActivityResultLaunc
             )
         }
         HorizontalDivider(thickness = 1.dp, color = Color(0xFFCCCCCC), modifier = Modifier.padding(top = 12.dp, bottom = 12.dp))
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Icon(
+                painter = painterResource(id = R.drawable.query_builder),
+                contentDescription = "Time to complete",
+                tint = AppPrimeThird,
+                modifier = Modifier.size(24.dp)
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                text = "Notes: ",
+                color = Color.Black,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 18.sp,
+                textAlign = TextAlign.Left,
+            )
+            Text(
+                text = pattern.notes,
+                color = Color.Gray,
+                fontWeight = FontWeight.Normal,
+                fontSize = 18.sp,
+                textAlign = TextAlign.Left
+            )
+        }
     }
-    Text(
-        text = pattern.notes,
-        color = Color.Black,
-        fontWeight = FontWeight.Normal,
-        fontSize = 14.sp,
-        textAlign = TextAlign.Left
-    )
 }
 @Composable
 fun PagerPageOne(pattern: CrochetPattern) {
     Column(
-        modifier = Modifier.padding(16.dp),
-        horizontalAlignment = Alignment.Start
+        modifier = Modifier.padding(start = 16.dp, end = 16.dp),
+        horizontalAlignment = Alignment.Start,
+        verticalArrangement = Arrangement.Top
     ) {
         Text(
             text = "Materials needed for this project",
@@ -447,7 +479,10 @@ fun PagerPageOne(pattern: CrochetPattern) {
 @Composable
 fun PagerPageTwo() {
     val steps = List(4) {remember { mutableStateOf(false) }}
-    LazyColumn(modifier = Modifier.padding(16.dp)) {
+    LazyColumn(
+        modifier = Modifier.padding(start = 16.dp, end = 16.dp),
+        verticalArrangement = Arrangement.Top
+    ) {
         items(steps) { isComplete ->
             Card(
                 modifier = Modifier

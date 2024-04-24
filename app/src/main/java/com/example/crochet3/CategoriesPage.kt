@@ -24,7 +24,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.crochet3.ui.theme.Crochet3Theme
 import androidx.compose.material3.Card
+import androidx.compose.material3.DrawerState
+import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.layout.ContentScale
@@ -34,33 +37,45 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.crochet3.ui.theme.AppPrime
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.crochet3.viewModels.CategoryViewModel
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun CategoriesScreen(navController: NavController) {
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val scope = rememberCoroutineScope()
     val viewModel: CategoryViewModel = viewModel()
     val categories = viewModel.getCategories().observeAsState(initial = emptyList())
-    Scaffold(
-        topBar = {TopAppBar(navController, "Categories")},
-        bottomBar = { BottomBar(navController) },
-        containerColor = Color.Transparent,
-        modifier = Modifier.background(appGradient()))
-    {
-        Column(modifier = Modifier.padding(top = 100.dp))
+    Drawer(navController, drawerState, scope) {
+        Scaffold(
+            topBar = { TopAppBar(navController, "Categories", drawerState, scope) },
+            bottomBar = { BottomBar(navController) },
+            containerColor = Color.Transparent,
+            modifier = Modifier.background(appGradient())
+        )
         {
-            WhiteCard {
-                LazyVerticalGrid(
-                    columns = GridCells.Fixed(2),
-                    modifier = Modifier.padding(start = 10.dp, top = 20.dp, end = 10.dp, bottom =80.dp))
-                {
-                    itemsIndexed(categories.value) { index, title ->
-                        CategoryCard(
-                            title = title,
-                            navController = navController,
-                            destination = "subscreensCategories"
+            Column(modifier = Modifier.padding(top = 100.dp))
+            {
+                WhiteCard {
+                    LazyVerticalGrid(
+                        columns = GridCells.Fixed(2),
+                        modifier = Modifier.padding(
+                            start = 10.dp,
+                            top = 20.dp,
+                            end = 10.dp,
+                            bottom = 80.dp
                         )
+                    )
+                    {
+                        itemsIndexed(categories.value) { index, title ->
+                            CategoryCard(
+                                title = title,
+                                navController = navController,
+                                destination = "subscreensCategories"
+                            )
+                        }
                     }
                 }
             }

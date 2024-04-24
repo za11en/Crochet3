@@ -35,15 +35,19 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.DrawerState
+import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusChanged
@@ -59,54 +63,59 @@ import com.example.crochet3.viewModels.SearchViewModel
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun SearchPage(navController: NavController,initialSearchText: String, searchViewModel: SearchViewModel = viewModel()) {
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val scope = rememberCoroutineScope()
     val isFocused by searchViewModel.isFocused.observeAsState(initial = false)
     val searchText by searchViewModel.searchText.observeAsState(initial = "")
     val patterns by searchViewModel.searchResults.observeAsState(initial = emptyList())
-    Scaffold(
-        topBar = { TopAppBar(navController, "Search") },
-        bottomBar = { BottomBar(navController) },
-        containerColor = Color.Transparent,
-        modifier = Modifier.background(appGradient())
-    ) {
-        Column(modifier = Modifier.padding(top = 100.dp)) {
-            SearchBar(searchText, isFocused, searchViewModel, navController)
-            Spacer(modifier = Modifier.height(32.dp))
-            WhiteCard {
-                Column(
-                    modifier = Modifier
-                        .padding(start = 10.dp, end = 10.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Row(
+    Drawer(navController, drawerState, scope) {
+        Scaffold(
+            topBar = { TopAppBar(navController, "Search", drawerState, scope) },
+            bottomBar = { BottomBar(navController) },
+            containerColor = Color.Transparent,
+            modifier = Modifier.background(appGradient())
+        ) {
+            Column(modifier = Modifier.padding(top = 100.dp)) {
+                SearchBar(searchText, isFocused, searchViewModel, navController)
+                Spacer(modifier = Modifier.height(32.dp))
+                WhiteCard {
+                    Column(
                         modifier = Modifier
-                            .padding(start = 6.dp, end = 6.dp)
-                            .fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
+                            .padding(start = 10.dp, end = 10.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Text(
-                            text = "Search Results For: $searchText",
-                            lineHeight = 16.sp,
-                            color = AppPrime,
-                            fontWeight = FontWeight.ExtraBold,
-                            textAlign = androidx.compose.ui.text.style.TextAlign.Left,
-                            fontSize = 14.sp,
+                        Row(
                             modifier = Modifier
-                                .padding(top = 20.dp, start = 0.dp, bottom = 20.dp, end = 0.dp)
-                                .weight(.7f)
-                        )
-                        FilterMenu(searchViewModel)
-                        Spacer(modifier = Modifier.width(8.dp))
-                        SortMenu(searchViewModel)
-                    }
-                    LazyVerticalGrid(
-                        columns = GridCells.Fixed(2), modifier = Modifier.padding(bottom = 80.dp)
-                    ) {
-                        items(patterns) { pattern ->
-                            PatternCard(pattern, navController)
+                                .padding(start = 6.dp, end = 6.dp)
+                                .fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text(
+                                text = "Search Results For: $searchText",
+                                lineHeight = 16.sp,
+                                color = AppPrime,
+                                fontWeight = FontWeight.ExtraBold,
+                                textAlign = androidx.compose.ui.text.style.TextAlign.Left,
+                                fontSize = 14.sp,
+                                modifier = Modifier
+                                    .padding(top = 20.dp, start = 0.dp, bottom = 20.dp, end = 0.dp)
+                                    .weight(.7f)
+                            )
+                            FilterMenu(searchViewModel)
+                            Spacer(modifier = Modifier.width(8.dp))
+                            SortMenu(searchViewModel)
                         }
+                        LazyVerticalGrid(
+                            columns = GridCells.Fixed(2),
+                            modifier = Modifier.padding(bottom = 80.dp)
+                        ) {
+                            items(patterns) { pattern ->
+                                PatternCard(pattern, navController)
+                            }
+                        }
+                        Spacer(modifier = Modifier.height(80.dp))
                     }
-                    Spacer(modifier = Modifier.height(80.dp))
                 }
             }
         }
