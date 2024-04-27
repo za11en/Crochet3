@@ -10,7 +10,6 @@ enum class Screens(val route: String) {
     SUBSCREENSCATEGORIES("subscreensCategories"),
     FAVORITES("favorites"),
     PATTERNPAGE("patternPage"),
-    TOOLS("tools"),
     APPINFO("appInfo"),
     HATS("hats"),
     SCARVES("scarves"),
@@ -78,21 +77,8 @@ enum class Category {
 
 enum class HookSize(val size: String) {
     TWOPOINTFIVE("2.5mm"),
-    THREE("3.0mm"),
-    THREEPOINTFIVE("3.5mm"),
-    FOUR("4.0mm"),
-    FOURPOINTFIVE("4.5mm"),
     FIVE("5.0mm"),
-    FIVEPOINTFIVE("5.5mm"),
-    SIX("6.0mm"),
-    SIXPOINTFIVE("6.5mm"),
-    SEVEN("7.0mm"),
-    SEVENPOINTFIVE("7.5mm"),
-    EIGHT("8.0mm"),
     EIGHTPOINTFIVE("8.5mm"),
-    NINE("9.0mm"),
-    NINEPOINTFIVE("9.5mm"),
-    TEN("10.0mm")
 }
 
 val crochetPatterns = listOf(

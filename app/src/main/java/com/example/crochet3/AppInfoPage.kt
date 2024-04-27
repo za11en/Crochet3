@@ -5,7 +5,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -15,15 +14,14 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.example.crochet3.ui.theme.Typography
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun AppInfo(navController: NavController) {
+
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     Drawer(navController, drawerState, scope) {
@@ -31,8 +29,7 @@ fun AppInfo(navController: NavController) {
             topBar = { TopAppBar(navController, "App Info", drawerState, scope) },
             bottomBar = { BottomBar(navController) },
             containerColor = Color.Transparent,
-            modifier = Modifier
-                .background(appGradient())
+            modifier = Modifier.background(appGradient())
         )
         {
             AppInfoContent()
@@ -88,9 +85,4 @@ fun AppInfoContent() {
             }
         }
     }
-}
-@Preview
-@Composable
-fun AppInfoPreview() {
-    AppInfo(rememberNavController())
 }

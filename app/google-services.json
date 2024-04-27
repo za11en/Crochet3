@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1078578393825",
+    "project_id": "crochet3-3364e",
+    "storage_bucket": "crochet3-3364e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1078578393825:android:1a5ca879bf8e20244d7da0",
+        "android_client_info": {
+          "package_name": "com.example.crochet3"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBclcLnlmNj3G-bRxWsaFtRGaNL7HenF1U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

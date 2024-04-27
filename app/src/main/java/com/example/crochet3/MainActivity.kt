@@ -52,6 +52,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.onFocusChanged
@@ -63,19 +64,21 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.example.crochet3.Data.crochetPatterns
 import com.example.crochet3.ui.theme.AppPrime
 import com.example.crochet3.ui.theme.AppPrimeSecond
 import com.example.crochet3.ui.theme.AppPrimeThird
 import com.example.crochet3.ui.theme.Typography
 import com.example.crochet3.ui.theme.Poppins
+import com.example.crochet3.viewModels.FirestoreViewModel
 import com.example.crochet3.viewModels.MainViewModel
+import com.google.firebase.FirebaseApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        FirebaseApp.initializeApp(this)
         setContent {
             Crochet3Theme {
                 val viewModel = viewModel<MainViewModel>()
@@ -97,10 +100,12 @@ fun MainScreen(navController: NavController) {
     Drawer(navController, drawerState, scope) {
         MainContent(navController, drawerState, scope)
     }
-
 }
 @Composable
 fun MainContent(navController: NavController, drawerState: DrawerState, scope: CoroutineScope) {
+    val viewModel: FirestoreViewModel = viewModel()
+    val collectionPath = "PatternDatabase"
+    val dataState = viewModel.getCollection(collectionPath).observeAsState(initial = null)
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -315,6 +320,7 @@ fun MainContent(navController: NavController, drawerState: DrawerState, scope: C
                 }
             }
             WhiteCard {
+
                 Column(modifier = Modifier.background(Color.White)) {
                     Text(
                         text = "New Patterns",
@@ -342,9 +348,19 @@ fun MainContent(navController: NavController, drawerState: DrawerState, scope: C
                         modifier = Modifier
                             .padding(start = 10.dp, top = 8.dp, end = 10.dp, bottom = 80.dp)
                     ) {
-                        val newPatterns = crochetPatterns.filter { it.newPattern }
-                        items(newPatterns) { pattern ->
-                            PatternCard(pattern, navController)
+                        when {
+                            dataState.value?.isSuccess == true -> {
+                                dataState.value?.getOrNull()?.let { list ->
+                                    items(list) { pattern ->
+                                        if (pattern != null) {
+                                            PatternCard2(pattern = pattern, navController = navController)
+                                        }
+                                    }
+                                }
+                            }
+                            else -> {
+                                item { LoadingIndicator() }
+                            }
                         }
                     }
                 }

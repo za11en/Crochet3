@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
+    alias(libs.plugins.googleGmsGoogleServices)
 }
 
 android {
@@ -50,15 +51,20 @@ android {
 }
 
 dependencies {
+    implementation("io.coil-kt:coil-compose:1.3.2")
+implementation(platform("com.google.firebase:firebase-bom:32.8.1"))
+    implementation("com.google.firebase:firebase-auth-ktx")
+    implementation("com.google.firebase:firebase-analytics")
+    implementation("androidx.room:room-runtime:2.6.1")
     implementation("com.google.accompanist:accompanist-pager-indicators:0.20.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
-    implementation("androidx.datastore:datastore-preferences:1.0.0")
+    implementation("androidx.datastore:datastore-preferences:1.1.0")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.7.0")
-    implementation("androidx.compose.runtime:runtime-livedata:1.6.5")
+    implementation("androidx.compose.runtime:runtime-livedata:1.6.6")
     implementation("com.google.code.gson:gson:2.10.1")
     implementation("com.google.accompanist:accompanist-pager:0.34.0")
-    implementation("androidx.compose.ui:ui-text-google-fonts:1.6.5")
-    implementation("androidx.compose.ui:ui:1.6.5")
+    implementation("androidx.compose.ui:ui-text-google-fonts:1.6.6")
+    implementation("androidx.compose.ui:ui:1.6.6")
     implementation("androidx.navigation:navigation-compose:2.7.7")
     implementation("androidx.compose.material3:material3:1.2.1")
     implementation(libs.androidx.core.ktx)
@@ -72,6 +78,7 @@ dependencies {
     implementation(libs.common)
     implementation(libs.androidx.room.common)
     implementation(libs.androidx.room.ktx)
+    implementation(libs.firebase.firestore)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -80,3 +87,4 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 }
+

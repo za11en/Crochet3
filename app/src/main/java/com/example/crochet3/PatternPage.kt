@@ -84,7 +84,11 @@ import kotlinx.coroutines.delay
 @OptIn(ExperimentalFoundationApi::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun PatternPage(navController: NavController, patternName: String) {
+fun PatternPage(
+    navController: NavController,
+    onNavigateUp: () -> Unit,
+    patternName: String
+) {
     val scope = rememberCoroutineScope()
     val selectedImage = remember { mutableStateOf<Int?>(null) }
     val openLinkLauncher = rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) { result -> }
@@ -94,7 +98,7 @@ fun PatternPage(navController: NavController, patternName: String) {
     val pagerState = rememberPagerState(pageCount = { 3 })
     val screenWidth = getScreenWidth()
     Scaffold(
-        topBar = { TopAppBarWithShare(navController, pattern, shareLauncher) },
+        topBar = { TopAppBarWithShare(onNavigateUp, pattern, shareLauncher) },
         bottomBar = { BottomBar(navController) }
     ) {
         Box(
@@ -559,5 +563,5 @@ fun PagerPageTwoPreview() {
 @Composable
 fun PatternPagePreview() {
     val navController = rememberNavController()
-    PatternPage(navController, "Hats")
+    PatternPage(navController,onNavigateUp = {},"Hats")
 }

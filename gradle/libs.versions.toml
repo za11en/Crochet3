@@ -1,16 +1,18 @@
 [versions]
 agp = "8.4.0-rc02"
 kotlin = "1.9.0"
-coreKtx = "1.12.0"
+coreKtx = "1.13.0"
 junit = "4.13.2"
 junitVersion = "1.1.5"
 espressoCore = "3.5.1"
 lifecycleRuntimeKtx = "2.7.0"
-activityCompose = "1.8.2"
-composeBom = "2024.04.00"
+activityCompose = "1.9.0"
+composeBom = "2024.04.01"
 common = "18.10.0"
 roomCommon = "2.6.1"
 roomKtx = "2.6.1"
+googleGmsGoogleServices = "4.4.1"
+firebaseFirestore = "24.11.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -30,8 +32,10 @@ androidx-material3 = { group = "androidx.compose.material3", name = "material3" 
 common = { group = "com.google.mlkit", name = "common", version.ref = "common" }
 androidx-room-common = { group = "androidx.room", name = "room-common", version.ref = "roomCommon" }
 androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "roomKtx" }
+firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore", version.ref = "firebaseFirestore" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 jetbrainsKotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+googleGmsGoogleServices = { id = "com.google.gms.google-services", version.ref = "googleGmsGoogleServices" }
 

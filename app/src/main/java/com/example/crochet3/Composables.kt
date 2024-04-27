@@ -44,6 +44,7 @@ import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.FloatingActionButton
@@ -53,6 +54,7 @@ import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -73,6 +75,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import coil.annotation.ExperimentalCoilApi
+import coil.compose.rememberImagePainter
 import com.example.crochet3.Data.Category
 import com.example.crochet3.Data.CrochetPattern
 import com.example.crochet3.Data.Difficulty
@@ -82,6 +86,7 @@ import com.example.crochet3.ui.theme.AppPrimeSecond
 import com.example.crochet3.ui.theme.AppPrimeThird
 import com.example.crochet3.ui.theme.TitleTiny
 import com.example.crochet3.ui.theme.Typography
+import com.example.crochet3.viewModels.PatternDatabase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -120,7 +125,10 @@ fun TopAppBar(navController: NavController, title: String, drawerState: DrawerSt
     }
 }
 @Composable
-fun TopAppBarWithShare(navController: NavController, pattern: CrochetPattern, shareLauncher: ActivityResultLauncher<Intent>) {
+fun TopAppBarWithShare(
+    onNavigateUp: () -> Unit,
+    pattern: CrochetPattern,
+    shareLauncher: ActivityResultLauncher<Intent>) {
     val isFavorite = remember { mutableStateOf(false) }
     Row(
         modifier = Modifier
@@ -130,18 +138,16 @@ fun TopAppBarWithShare(navController: NavController, pattern: CrochetPattern, sh
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         IconButton(
-            onClick = { navController.navigateUp() },
+            onClick = { onNavigateUp()},
             modifier = Modifier
                 .background(Color(0x20000000), RoundedCornerShape(12.dp))
-        )
-        {
+        ) {
             Icon(
                 Icons.AutoMirrored.Filled.ArrowBack,
                 tint = Color.White,
                 contentDescription = "Back",
-                modifier = Modifier
-                    .size(24.dp)
-                    .clickable { navController.navigateUp() })
+                modifier = Modifier.size(24.dp)
+            )
         }
         Text(
             text = "",
@@ -394,6 +400,100 @@ fun PatternCard(pattern: CrochetPattern, navController: NavController) {
         }
     }
 }
+@OptIn(ExperimentalCoilApi::class)
+@Composable
+fun PatternCard2(pattern: PatternDatabase, navController: NavController) {
+    val isFavorite = remember { mutableStateOf(pattern.isFavorite) }
+    Box {
+        Card(modifier = Modifier
+            .padding(6.dp)
+            .border(6.dp, Color.White, RoundedCornerShape(16.dp))
+            .shadow(8.dp, shape = RoundedCornerShape(16.dp))
+            .height(175.dp)
+            .width(getScreenWidth() /2 )
+            .clickable { navController.navigate("patternPage/${pattern.name}") }){
+            Image(
+                painter = rememberImagePainter(
+                    data = pattern.imageResId,
+                    builder = {
+                        crossfade(false)
+                    }
+                ),
+                contentDescription = "Crochet Image",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clip(
+                        RoundedCornerShape(
+                            topStart = 16.dp,
+                            topEnd = 16.dp,
+                            bottomEnd = 0.dp,
+                            bottomStart = 0.dp
+                        )
+                    )
+                    .weight(1f)
+            )
+            Row {
+                Column(
+                    modifier = Modifier
+                        .padding(start = 6.dp, bottom = 4.dp)
+                        .fillMaxWidth()
+                        .background(Color.White)
+                ) {
+                    Text(
+                        text = pattern.name,
+                        style = Typography.titleSmall,
+                        modifier = Modifier.padding(start = 4.dp, top = 2.dp)
+                    )
+                    Text(
+                        text = pattern.creatorname,
+                        style = TitleTiny,
+                        modifier = Modifier.padding(start = 4.dp, bottom = 2.dp)
+                    )
+                }
+            }
+        }
+        if (pattern.newPattern) {
+            Box( modifier = Modifier
+                .offset(x = (-4).dp, y = 20.dp)) {
+                NewRibbon()
+            }
+        }
+        Row( modifier = Modifier
+            .width(getScreenWidth() /2)
+            .padding(top = 18.dp, end = 18.dp),verticalAlignment = Alignment.Top, horizontalArrangement = Arrangement.End) {
+            FavoriteButton(isFavorite = isFavorite, size = 30)
+        }
+    }
+}
+@Composable
+fun LoadingIndicator() {
+    CircularProgressIndicator(strokeWidth = 4.dp, modifier = Modifier.padding(12.dp))
+}
+@Preview
+@Composable
+fun LoadingIndicatorPreview() {
+    LoadingIndicator()
+}
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@Preview
+@Composable
+fun DrawerPreview(){
+    val navController = rememberNavController()
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val scope = rememberCoroutineScope()
+    Drawer(navController, drawerState, scope) {
+        Scaffold(
+            topBar = { TopAppBar(navController, "Home", drawerState, scope) },
+            bottomBar = { BottomBar(navController) }
+        ) {
+            Column {
+                Text("Hello World")
+            }
+        }
+    }
+
+}
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun Drawer(
@@ -537,7 +637,6 @@ fun BottomBarPreview() {
 @Preview
 @Composable
 fun TopMenuPreview() {
-    val navController = rememberNavController()
     val scope = rememberCoroutineScope()
     TopAppBar(navController = rememberNavController(), title = "Home", drawerState = DrawerState(DrawerValue.Closed), scope = scope)
 }
