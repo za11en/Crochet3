@@ -4,11 +4,11 @@ import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -23,15 +23,16 @@ import androidx.navigation.compose.rememberNavController
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.crochet3.viewModels.PatternViewModel
+import com.example.crochet3.viewModels.FirestoreViewModel
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun SubscreensCategories(navController: NavController, title: String) {
+
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
-    val viewModel: PatternViewModel = viewModel()
-    val patterns = viewModel.getPatternsByCategory(title).observeAsState(initial = emptyList())
+    val viewModel: FirestoreViewModel = viewModel()
+    val patterns = viewModel.getPatternsByCategory("PatternDatabase", title).observeAsState(initial = null)
     Drawer(navController, drawerState, scope) {
         Scaffold(
             topBar = { TopAppBar(navController, title, drawerState, scope) },
@@ -43,19 +44,22 @@ fun SubscreensCategories(navController: NavController, title: String) {
                 WhiteCard {
                     LazyVerticalGrid(
                         columns = GridCells.Fixed(2),
-                        modifier = Modifier.padding(
-                            start = 10.dp,
-                            top = 16.dp,
-                            end = 10.dp,
-                            bottom = 80.dp
-                        )
-                    )
-                    {
-                        items(patterns.value) { pattern ->
-                            PatternCard(pattern, navController)
+                        modifier = Modifier
+                            .padding(start = 10.dp, top = 16.dp, end = 10.dp, bottom = 80.dp)
+                    ) {
+                        patterns.value?.let {result ->
+                            if (result.isSuccess){
+                                result.getOrNull()?.let { list ->
+                                    items(list) { pattern ->
+                                        if (pattern != null) {
+                                            PatternCard2(pattern, navController)
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
-                    Spacer(modifier = Modifier.padding(40.dp))
+                    Spacer(modifier = Modifier.height(80.dp))
                 }
             }
         }

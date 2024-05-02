@@ -47,12 +47,16 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationDrawerItem
+import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SearchBarColors
+import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
@@ -80,13 +84,12 @@ import coil.compose.rememberImagePainter
 import com.example.crochet3.Data.Category
 import com.example.crochet3.Data.CrochetPattern
 import com.example.crochet3.Data.Difficulty
-import com.example.crochet3.Data.HookSize
+import com.example.crochet3.Data.PatternDatabase
 import com.example.crochet3.ui.theme.AppPrime
 import com.example.crochet3.ui.theme.AppPrimeSecond
 import com.example.crochet3.ui.theme.AppPrimeThird
 import com.example.crochet3.ui.theme.TitleTiny
 import com.example.crochet3.ui.theme.Typography
-import com.example.crochet3.viewModels.PatternDatabase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -101,8 +104,7 @@ fun TopAppBar(navController: NavController, title: String, drawerState: DrawerSt
     ) {
         IconButton(
             onClick = { navController.navigateUp() },
-            modifier = Modifier
-                .background(Color(0x20000000), RoundedCornerShape(12.dp)))
+            modifier = Modifier.background(Color(0x20000000), RoundedCornerShape(12.dp)))
         {
             Icon(
                 Icons.AutoMirrored.Filled.ArrowBack,
@@ -189,7 +191,7 @@ fun BottomBar(navController: NavController) {
                 BottomBarItem(navController, currentRoute, "main", Icons.Filled.Home, "Home")
                 BottomBarItem(navController, currentRoute, "favorites", Icons.Filled.Favorite, "Favorites")
                 BottomBarItem(navController, currentRoute, "searchPage", Icons.Filled.Search, "Search")
-                BottomBarItem(navController, currentRoute, "myProjects", Icons.Filled.AccountCircle, "My Projects")
+                BottomBarItem(navController, currentRoute, "Projects", Icons.Filled.AccountCircle, "Projects")
                 BottomBarItem(navController, currentRoute, "categoriesScreen", Icons.Filled.Menu, "Patterns")
             }
         }
@@ -202,13 +204,7 @@ fun BottomBarItem(navController: NavController, currentRoute: String?, route: St
     val color = if (isSelected) Color.White else Color.Gray
     val textColor = if (isSelected) AppPrime else Color.Gray
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        IconButton(onClick = {
-            if (route == "searchPage") {
-                navController.navigate("$route/Search") // Append "/Search" when navigating
-            } else {
-                navController.navigate(route)
-            }
-        },
+        IconButton(onClick = { navController.navigate(route)},
             modifier = if (isSelected) Modifier.background(Brush.linearGradient(colors = listOf(
                 AppPrimeSecond,
                 AppPrimeThird
@@ -468,19 +464,19 @@ fun PatternCard2(pattern: PatternDatabase, navController: NavController) {
 }
 @Composable
 fun LoadingIndicator() {
-    CircularProgressIndicator(strokeWidth = 4.dp, modifier = Modifier.padding(12.dp))
+    CircularProgressIndicator(strokeWidth = 4.dp, color = AppPrime,modifier = Modifier
+        .padding(12.dp)
+        .size(32.dp)
+        .height(32.dp)
+    )
 }
-@Preview
-@Composable
-fun LoadingIndicatorPreview() {
-    LoadingIndicator()
-}
+
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Preview
 @Composable
 fun DrawerPreview(){
     val navController = rememberNavController()
-    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Open)
     val scope = rememberCoroutineScope()
     Drawer(navController, drawerState, scope) {
         Scaffold(
@@ -488,7 +484,7 @@ fun DrawerPreview(){
             bottomBar = { BottomBar(navController) }
         ) {
             Column {
-                Text("Hello World")
+                Text(" ")
             }
         }
     }
@@ -505,7 +501,7 @@ fun Drawer(
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
-            ModalDrawerSheet {
+            ModalDrawerSheet (drawerContainerColor = Color.White) {
                 Column(modifier = Modifier
                     .height(200.dp)
                     .fillMaxWidth()
@@ -526,6 +522,15 @@ fun Drawer(
                         .width(28.dp) ) },
                     label = { Text(text = "Home", fontSize = 16.sp, fontWeight = FontWeight.Bold, lineHeight = 24.sp, modifier = Modifier.padding(start = 16.dp)) },
                     selected = false,
+                    shape = RoundedCornerShape(16.dp, 0.dp, 0.dp,16.dp) ,
+                    colors = NavigationDrawerItemDefaults.colors(
+                        unselectedContainerColor = Color.White,
+                        unselectedIconColor = Color.DarkGray,
+                        unselectedTextColor = Color.DarkGray,
+                        selectedContainerColor = AppPrimeThird,
+                        selectedIconColor = Color.White,
+                        selectedTextColor = Color.White,
+                    ),
                     modifier = Modifier.padding(top = 16.dp, start = 16.dp).height(40.dp),
                     onClick = {navController.navigate("main")}
                 )
@@ -535,6 +540,14 @@ fun Drawer(
                         .width(28.dp)) },
                     label = { Text(text = "Favorites", fontSize = 16.sp, fontWeight = FontWeight.Bold, lineHeight = 24.sp, modifier = Modifier.padding(start = 16.dp)) },
                     selected = false,
+                    colors = NavigationDrawerItemDefaults.colors(
+                        unselectedContainerColor = Color.White,
+                        unselectedIconColor = Color.DarkGray,
+                        unselectedTextColor = Color.DarkGray,
+                        selectedContainerColor = AppPrimeThird,
+                        selectedIconColor = Color.White,
+                        selectedTextColor = Color.White
+                    ),
                     modifier = Modifier.padding(top = 8.dp, start = 16.dp).height(40.dp),
                     onClick = {navController.navigate("favorites")}
                 )
@@ -544,8 +557,16 @@ fun Drawer(
                         .width(28.dp)) } ,
                     label = { Text(text = "Search", fontSize = 16.sp, fontWeight = FontWeight.Bold, lineHeight = 24.sp, modifier = Modifier.padding(start = 16.dp)) },
                     selected = false,
+                    colors = NavigationDrawerItemDefaults.colors(
+                        unselectedContainerColor = Color.White,
+                        unselectedIconColor = Color.DarkGray,
+                        unselectedTextColor = Color.DarkGray,
+                        selectedContainerColor = AppPrimeThird,
+                        selectedIconColor = Color.White,
+                        selectedTextColor = Color.White
+                    ),
                     modifier = Modifier.padding(top = 8.dp, start = 16.dp).height(40.dp),
-                    onClick = {navController.navigate("searchPage/{searchText}")}
+                    onClick = {navController.navigate("searchPage")}
                 )
                 NavigationDrawerItem(
                     icon = { Icon(painter = painterResource(id = R.drawable.inventory), contentDescription = "Localized description", modifier = Modifier
@@ -553,6 +574,14 @@ fun Drawer(
                         .width(28.dp)) } ,
                     label = { Text(text = "Patterns", fontSize = 16.sp, fontWeight = FontWeight.Bold, lineHeight = 24.sp, modifier = Modifier.padding(start = 16.dp)) },
                     selected = false,
+                    colors = NavigationDrawerItemDefaults.colors(
+                        unselectedContainerColor = Color.White,
+                        unselectedIconColor = Color.DarkGray,
+                        unselectedTextColor = Color.DarkGray,
+                        selectedContainerColor = AppPrimeThird,
+                        selectedIconColor = Color.White,
+                        selectedTextColor = Color.White
+                    ),
                     modifier = Modifier.padding(top = 8.dp, start = 16.dp).height(40.dp),
                     onClick = {navController.navigate("categoriesScreen")}
                 )
@@ -567,8 +596,16 @@ fun Drawer(
                                 .width(28.dp)) } ,
                     label = { Text(text = "Row Counter", fontSize = 16.sp, fontWeight = FontWeight.Bold, lineHeight = 24.sp, modifier = Modifier.padding(start = 16.dp)) },
                     selected = false,
+                    colors = NavigationDrawerItemDefaults.colors(
+                        unselectedContainerColor = Color.White,
+                        unselectedIconColor = Color.DarkGray,
+                        unselectedTextColor = Color.DarkGray,
+                        selectedContainerColor = AppPrimeThird,
+                        selectedIconColor = Color.White,
+                        selectedTextColor = Color.White
+                    ),
                     modifier = Modifier.padding(top = 8.dp, start = 16.dp).height(40.dp),
-                    onClick = {navController.navigate("tools")}
+                    onClick = {navController.navigate("Row Counter")}
                 )
                 NavigationDrawerItem(
                     icon = {
@@ -578,8 +615,16 @@ fun Drawer(
                                 .width(28.dp)) } ,
                     label = { Text(text = "Unit Conversion", fontSize = 16.sp, fontWeight = FontWeight.Bold, lineHeight = 24.sp, modifier = Modifier.padding(start = 16.dp)) },
                     selected = false,
+                    colors = NavigationDrawerItemDefaults.colors(
+                        unselectedContainerColor = Color.White,
+                        unselectedIconColor = Color.DarkGray,
+                        unselectedTextColor = Color.DarkGray,
+                        selectedContainerColor = AppPrimeThird,
+                        selectedIconColor = Color.White,
+                        selectedTextColor = Color.White
+                    ),
                     modifier = Modifier.padding(top = 8.dp, start = 16.dp).height(40.dp),
-                    onClick = {navController.navigate("tools")}
+                    onClick = {navController.navigate("Unit Conversion")}
                 )
                 NavigationDrawerItem(
                     icon = {
@@ -589,6 +634,14 @@ fun Drawer(
                                 .width(28.dp)) } ,
                     label = { Text(text = "Hook and Yarn Sizing", fontSize = 16.sp, fontWeight = FontWeight.Bold, lineHeight = 24.sp, modifier = Modifier.padding(start = 16.dp)) },
                     selected = false,
+                    colors = NavigationDrawerItemDefaults.colors(
+                        unselectedContainerColor = Color.White,
+                        unselectedIconColor = Color.DarkGray,
+                        unselectedTextColor = Color.DarkGray,
+                        selectedContainerColor = AppPrimeThird,
+                        selectedIconColor = Color.White,
+                        selectedTextColor = Color.White
+                    ),
                     modifier = Modifier.padding(top = 8.dp, start = 16.dp).height(40.dp),
                     onClick = {navController.navigate("tools")}
                 )
@@ -600,6 +653,14 @@ fun Drawer(
                                 .width(28.dp)) } ,
                     label = { Text(text = "Sizing", fontSize = 16.sp, fontWeight = FontWeight.Bold, lineHeight = 24.sp, modifier = Modifier.padding(start = 16.dp)) },
                     selected = false,
+                    colors = NavigationDrawerItemDefaults.colors(
+                        unselectedContainerColor = Color.White,
+                        unselectedIconColor = Color.DarkGray,
+                        unselectedTextColor = Color.DarkGray,
+                        selectedContainerColor = AppPrimeThird,
+                        selectedIconColor = Color.White,
+                        selectedTextColor = Color.White
+                    ),
                     modifier = Modifier.padding(top = 8.dp, start = 16.dp).height(40.dp),
                     onClick = {navController.navigate("tools")}
                 )
@@ -612,6 +673,14 @@ fun Drawer(
                                 .width(28.dp)) } ,
                     label = { Text(text = "Info", fontSize = 16.sp, fontWeight = FontWeight.Bold, lineHeight = 24.sp, modifier = Modifier.padding(start = 16.dp)) },
                     selected = false,
+                    colors = NavigationDrawerItemDefaults.colors(
+                        unselectedContainerColor = Color.White,
+                        unselectedIconColor = Color.DarkGray,
+                        unselectedTextColor = Color.DarkGray,
+                        selectedContainerColor = AppPrimeThird,
+                        selectedIconColor = Color.White,
+                        selectedTextColor = Color.White
+                    ),
                     modifier = Modifier
                         .padding(top = 8.dp, start = 16.dp),
                     onClick = { navController.navigate("appinfo")}
@@ -647,7 +716,6 @@ fun PatternCardPreview() {
         "test",
         true,
         Difficulty.EASY,
-        HookSize.TWOPOINTFIVE,
         Category.HATS,
         "test",
         "1",
@@ -662,25 +730,44 @@ fun PatternCardPreview() {
     val navController = rememberNavController()
     PatternCard(navController = navController, pattern =  previewtest)
 }
-@Preview(showBackground = true)
-@Composable
-fun FavoriteButtonPreview() {
-    val isFavorite = remember { mutableStateOf(false) }
-    FavoriteButton(isFavorite = isFavorite, size = 100)
-}
-@Preview(showBackground = true)
-@Composable
-fun ShareButtonPreview() {
-    ShareButton(onClick = {}, size = 100)
-}
 
-@Preview
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NewRibbonPreview() {
-    NewRibbon()
+fun SearchButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    placeholder: @Composable () -> Unit,
+    leadingIcon: @Composable (() -> Unit)? = null,
+    trailingIcon: @Composable (() -> Unit)? = null,
+    colors: SearchBarColors = SearchBarDefaults.colors(),
+) {
+    Box(
+        modifier = modifier
+            .height(56.dp)
+            .background(colors.containerColor, shape = RoundedCornerShape(32.dp))
+            .clickable(onClick = onClick)
+            .padding(horizontal = 16.dp),
+        contentAlignment = Alignment.CenterStart
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            leadingIcon?.invoke()
+            Spacer(modifier = Modifier.width(8.dp))
+            Box(
+                modifier = Modifier.weight(1f),
+                contentAlignment = Alignment.CenterStart
+            ) {
+                placeholder()
+            }
+            trailingIcon?.invoke()
+        }
+    }
 }
-@Preview
 @Composable
-fun WhiteCardPreview() {
-    WhiteCard(content={})
+fun Placeholder(text: String) {
+    Text(
+        text = text,
+        color = Color.Gray,
+        modifier = Modifier.fillMaxWidth()
+    )
 }

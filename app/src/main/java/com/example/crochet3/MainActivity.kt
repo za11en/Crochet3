@@ -23,21 +23,18 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
+import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -48,29 +45,23 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.crochet3.ui.theme.Crochet3Theme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.rememberDrawerState
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.crochet3.navigation.NavigationGraph
 import com.example.crochet3.ui.theme.AppPrime
 import com.example.crochet3.ui.theme.AppPrimeSecond
 import com.example.crochet3.ui.theme.AppPrimeThird
 import com.example.crochet3.ui.theme.Typography
 import com.example.crochet3.ui.theme.Poppins
 import com.example.crochet3.viewModels.FirestoreViewModel
-import com.example.crochet3.viewModels.MainViewModel
 import com.google.firebase.FirebaseApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -81,12 +72,7 @@ class MainActivity : ComponentActivity() {
         FirebaseApp.initializeApp(this)
         setContent {
             Crochet3Theme {
-                val viewModel = viewModel<MainViewModel>()
-                val searchText by viewModel.searchText.collectAsState()
-                val patterns by viewModel.patterns.collectAsState()
-                val isSearching by viewModel.isSearching.collectAsState()
-                val isFavorite by viewModel.isFavorite.collectAsState()
-                AppNavHost()
+                NavigationGraph()
             }
         }
     }
@@ -101,28 +87,15 @@ fun MainScreen(navController: NavController) {
         MainContent(navController, drawerState, scope)
     }
 }
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainContent(navController: NavController, drawerState: DrawerState, scope: CoroutineScope) {
     val viewModel: FirestoreViewModel = viewModel()
     val collectionPath = "PatternDatabase"
-    val dataState = viewModel.getCollection(collectionPath).observeAsState(initial = null)
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(
-                Brush.linearGradient(
-                    colors = listOf(
-                        AppPrimeSecond,
-                        AppPrimeThird,
-                        AppPrimeThird,
-                    )
-                )
-            )
+    val dataState = viewModel.getPatternsByIsNew(collectionPath, true).observeAsState(initial = null)
+    Box(modifier = Modifier.fillMaxSize().background(appGradient())
     ) {
-        val searchText = remember { mutableStateOf("") }
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally
+        Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -138,9 +111,7 @@ fun MainContent(navController: NavController, drawerState: DrawerState, scope: C
                     color = Color(0xFFFFFFFF),
                     fontWeight = FontWeight.Bold,
                     fontSize = 28.sp,
-                    modifier = Modifier
-                        .fillMaxWidth(.8f)
-                )
+                    modifier = Modifier.fillMaxWidth(.8f))
                 Icon(
                     Icons.Filled.Menu,
                     contentDescription = "help icon",
@@ -148,100 +119,37 @@ fun MainContent(navController: NavController, drawerState: DrawerState, scope: C
                     modifier = Modifier
                         .size(32.dp)
                         .padding(top = 2.dp)
-                        .clickable { scope.launch { drawerState.open() } }
-                )
+                        .clickable { scope.launch { drawerState.open() } })
             }
-            //Search bar
-            Surface(
-                color = Color(0xFFFFFFFF), shape = RoundedCornerShape(10.dp),
-                modifier = Modifier
-                    .padding(start = 16.dp, end = 16.dp)
-            ) {
-                val isFocused = remember { mutableStateOf(false) }
-                Box(modifier = Modifier.fillMaxWidth()) {
-                    IconButton(onClick = {
-                        if (searchText.value.isNotEmpty()) {
-                            navController.navigate("searchPage/${searchText.value}")
-                        }
-                    }, modifier = Modifier.align(Alignment.CenterStart)) {
-                        Icon(
-                            imageVector = Icons.Filled.Search,
-                            contentDescription = "Search Icon",
-                            tint = Color.Gray,
-                            modifier = Modifier.size(32.dp)
-                        )
-                    }
-                    BasicTextField(
-                        value = searchText.value,
-                        onValueChange = { searchText.value = it },
-                        cursorBrush = SolidColor(Color.Black),
-                        textStyle = TextStyle(color = Color.Black, fontSize = 24.sp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(50.dp)
-                            .padding(start = 50.dp, top = 10.dp, bottom = 10.dp, end = 50.dp)
-                            .clip(RoundedCornerShape(10.dp))
-                            .onFocusChanged { focusState ->
-                                isFocused.value = focusState.isFocused
-                            },
-                        singleLine = true,
-                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-                        keyboardActions = KeyboardActions(onSearch = {
-                            if (searchText.value.isNotEmpty()) {
-                                navController.navigate("searchPage/${searchText.value}")
-                            }
-                        })
+            SearchButton(
+                modifier = Modifier.padding(start = 16.dp, end = 16.dp),
+                onClick = { navController.navigate("searchPage") },
+                placeholder = { Placeholder("Search Patterns") },
+                colors = SearchBarDefaults.colors(
+                    containerColor = Color.White,
+                    dividerColor = AppPrime,
+                    inputFieldColors = TextFieldDefaults.colors(
+                        focusedTextColor = Color.DarkGray,
+                        unfocusedTextColor = Color.DarkGray,
                     )
-                    if (searchText.value.isEmpty() && !isFocused.value) {
-                        Text(
-                            text = "Search Patterns",
-                            color = Color.Gray,
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Normal,
-                            modifier = Modifier
-                                .padding(start = 50.dp)
-                                .align(Alignment.CenterStart)
-                        )
-                    }
-                    if (!isFocused.value) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.voice),
-                            contentDescription = "voice search",
-                            tint = Color.Gray,
-                            modifier = Modifier
-                                .align(Alignment.CenterEnd)
-                                .size(42.dp)
-                                .padding(end = 10.dp)
-                                .clickable { /*TODO*/ }
-                        )
-                    }
-                    if (searchText.value.isEmpty() && isFocused.value) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.voice),
-                            contentDescription = "voice search",
-                            tint = Color.Gray,
-                            modifier = Modifier
-                                .align(Alignment.CenterEnd)
-                                .size(42.dp)
-                                .padding(end = 10.dp)
-                                .clickable { /*TODO*/ }
-                        )
-                    }
-                    if (searchText.value.isNotEmpty() && isFocused.value) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.clear),
-                            contentDescription = "clear search",
-                            tint = Color.Gray,
-                            modifier = Modifier
-                                .align(Alignment.CenterEnd)
-                                .size(42.dp)
-                                .padding(end = 10.dp)
-                                .clickable { searchText.value = "" }
-                        )
-                    }
+                ),
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Filled.Search,
+                        contentDescription = "Search Icon",
+                        tint = Color.Gray,
+                        modifier = Modifier.size(32.dp)
+                    )
+                },
+                trailingIcon = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.voice),
+                        contentDescription = "clear search",
+                        tint = Color.Gray,
+                        modifier = Modifier.size(32.dp)
+                    )
                 }
-            }
-                //SEARCHBAR END
+            )
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -267,13 +175,12 @@ fun MainContent(navController: NavController, drawerState: DrawerState, scope: C
                         .clickable { navController.navigate("categoriesScreen") }
                 )
             }
-
             val imageIds = listOf(
-                R.drawable.g,
-                R.drawable.f,
-                R.drawable.amigurumi,
-                R.drawable.socks,
-                R.drawable.c   /* add more image IDs here */
+                R.drawable.cathat,
+                R.drawable.catscarf,
+                R.drawable.catami,
+                R.drawable.catsocks,
+                R.drawable.catblankets  /* add more image IDs here */
             )
             LazyRow(modifier = Modifier.padding(start = 16.dp)) {
                 itemsIndexed(
@@ -287,8 +194,7 @@ fun MainContent(navController: NavController, drawerState: DrawerState, scope: C
                 ) { index, item ->
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier
-                            .padding(end = 14.dp, bottom = 16.dp)
+                        modifier = Modifier.padding(end = 14.dp, bottom = 16.dp)
                     ) {
                         Card(
                             modifier = Modifier
@@ -320,7 +226,6 @@ fun MainContent(navController: NavController, drawerState: DrawerState, scope: C
                 }
             }
             WhiteCard {
-
                 Column(modifier = Modifier.background(Color.White)) {
                     Text(
                         text = "New Patterns",
@@ -329,11 +234,7 @@ fun MainContent(navController: NavController, drawerState: DrawerState, scope: C
                         color = AppPrime,
                         fontSize = 20.sp,
                         fontWeight = FontWeight.SemiBold,
-                        modifier = Modifier.padding(
-                            top = 20.dp,
-                            start = 20.dp,
-                            end = 10.dp
-                        ),
+                        modifier = Modifier.padding(top = 20.dp, start = 20.dp, end = 10.dp),
                         style = TextStyle(
                             brush = Brush.linearGradient(
                                 colors = listOf(
@@ -350,10 +251,10 @@ fun MainContent(navController: NavController, drawerState: DrawerState, scope: C
                     ) {
                         when {
                             dataState.value?.isSuccess == true -> {
-                                dataState.value?.getOrNull()?.let { list ->
+                                dataState.value?.getOrNull()?.filter { it!!.newPattern}?.let { list ->
                                     items(list) { pattern ->
                                         if (pattern != null) {
-                                            PatternCard2(pattern = pattern, navController = navController)
+                                            PatternCard2(pattern, navController)
                                         }
                                     }
                                 }

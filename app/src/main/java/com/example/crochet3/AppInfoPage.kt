@@ -29,8 +29,7 @@ fun AppInfo(navController: NavController) {
             topBar = { TopAppBar(navController, "App Info", drawerState, scope) },
             bottomBar = { BottomBar(navController) },
             containerColor = Color.Transparent,
-            modifier = Modifier.background(appGradient())
-        )
+            modifier = Modifier.background(appGradient()))
         {
             AppInfoContent()
         }
@@ -50,38 +49,32 @@ fun AppInfoContent() {
                     text = "Crochet Patterns",
                     color = Color.DarkGray,
                     style = Typography.bodyLarge,
-                    modifier = Modifier.padding(top = 32.dp)
-                )
+                    modifier = Modifier.padding(top = 32.dp))
                 Text(
                     text = "Version 1.0",
                     color = Color.DarkGray,
                     style = Typography.bodyLarge,
-                    modifier = Modifier.padding(top = 16.dp)
-                )
+                    modifier = Modifier.padding(top = 16.dp))
                 Text(
                     text = "Developed by: Zack Allinson",
                     color = Color.DarkGray,
                     style = Typography.bodyLarge,
-                    modifier = Modifier.padding(top = 48.dp)
-                )
+                    modifier = Modifier.padding(top = 48.dp))
                 Text(
                     text = "Owned and Operated by: Portkey Media",
                     color = Color.DarkGray,
                     style = Typography.bodyLarge,
-                    modifier = Modifier.padding(top = 16.dp)
-                )
+                    modifier = Modifier.padding(top = 16.dp))
                 Text(
                     text = "Contact:",
                     color = Color.DarkGray,
                     style = Typography.bodyLarge,
-                    modifier = Modifier.padding(top = 32.dp)
-                )
+                    modifier = Modifier.padding(top = 32.dp))
                 Text(
                     text = "info@portkey.ca",
                     color = Color.Blue,
                     style = Typography.bodyLarge,
-                    modifier = Modifier.padding(top = 16.dp)
-                )
+                    modifier = Modifier.padding(top = 16.dp))
             }
         }
     }

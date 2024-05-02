@@ -10,6 +10,7 @@ import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
@@ -20,18 +21,16 @@ import com.example.crochet3.R
 import androidx.compose.ui.text.font.FontWeight
 
 private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
+
+    background = Color.White,
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
 
-    /* Other default colors to override
-    background = Color(0xFFFFFBFE),
+
+
+    background = Color.White,
+    /*
     surface = Color(0xFFFFFBFE),
     onPrimary = Color.White,
     onSecondary = Color.White,
@@ -43,17 +42,12 @@ private val LightColorScheme = lightColorScheme(
 
 val Lato = FontFamily(
     Font(R.font.latoregular),
-    Font(R.font.latobold, FontWeight.Bold),
-    Font(R.font.latoblack, FontWeight.Black),
-    Font(R.font.latolight, FontWeight.Light),
-    Font(R.font.latosemibold, FontWeight.SemiBold),
     Font(R.font.latoextrabold, FontWeight.ExtraBold),
 )
 
 val Poppins = FontFamily(
     Font(R.font.poppinsregular),
     Font(R.font.poppinsbold, FontWeight.Bold),
-    Font(R.font.poppinsmedium, FontWeight.Medium),
     Font(R.font.poppinsbold, FontWeight.SemiBold),
 
 )

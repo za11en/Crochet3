@@ -87,8 +87,9 @@ import kotlinx.coroutines.delay
 fun PatternPage(
     navController: NavController,
     onNavigateUp: () -> Unit,
-    patternName: String
+    patternName: String,
 ) {
+
     val scope = rememberCoroutineScope()
     val selectedImage = remember { mutableStateOf<Int?>(null) }
     val openLinkLauncher = rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) { result -> }
@@ -405,7 +406,7 @@ fun PagerPageZero(pattern: CrochetPattern, openLinkLauncher: ActivityResultLaunc
                 textAlign = TextAlign.Left,
             )
             Text(
-                text = pattern.hookSize.size,
+                text = "",
                 color = Color.DarkGray,
                 fontWeight = FontWeight.Normal,
                 fontSize = 18.sp,

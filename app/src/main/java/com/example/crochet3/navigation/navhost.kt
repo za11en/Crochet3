@@ -1,14 +1,23 @@
-package com.example.crochet3
+package com.example.crochet3.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.crochet3.Data.Screens
+import com.example.crochet3.AppInfo
+import com.example.crochet3.CategoriesScreen
+import com.example.crochet3.Favorites
+import com.example.crochet3.MainScreen
+import com.example.crochet3.PatternPage
+import com.example.crochet3.Projects
+import com.example.crochet3.SearchPage
+import com.example.crochet3.SubscreensCategories
+import com.example.crochet3.tools.RowCounter
+import com.example.crochet3.tools.UnitConversion
 
 @Composable
-fun AppNavHost() {
+fun NavigationGraph() {
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = Screens.MAINACTIVITY.route) {
         composable(Screens.MAINACTIVITY.route) { MainScreen(navController) }
@@ -25,11 +34,11 @@ fun AppNavHost() {
         composable(Screens.SOCKS.route) { Socks() }
         composable(Screens.DECOR.route) { Decor() }
         composable(Screens.MISCELLANEOUS.route) { Miscellaneous() }
-        composable(Screens.MYPROJECTS.route) { MyProjects(navController) }
+        composable(Screens.PROJECTS.route) { Projects(navController) }
         composable("appInfo") { AppInfo(navController) }
-        composable("searchPage/{searchText}") { backStackEntry ->
-            val searchText = backStackEntry.arguments?.getString("searchText") ?:""
-            SearchPage(navController, searchText, viewModel()) }
+        composable("Unit Conversion") { UnitConversion(navController) }
+        composable("Row Counter") { RowCounter(navController) }
+        composable(Screens.SEARCHPAGE.route) { SearchPage(navController, viewModel()) }
         composable("patternPage/{patternName}") { backStackEntry ->
             val patternName = backStackEntry.arguments?.getString("patternName")
             PatternPage(navController, onNavigateUp = { navController.navigateUp() }, patternName ?: "") }

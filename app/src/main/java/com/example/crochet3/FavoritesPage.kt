@@ -5,6 +5,8 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -21,14 +23,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import com.example.crochet3.viewModels.FirestoreViewModel
-import com.example.crochet3.viewModels.MainViewModel
+
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun Favorites(navController: NavController, mainViewModel: MainViewModel= viewModel()){
-    val viewModel: FirestoreViewModel = viewModel()
-    val collectionPath = "PatternDatabase"
-    val dataState = viewModel.getCollection(collectionPath).observeAsState(initial = null)
+fun Favorites(navController: NavController, viewModel: FirestoreViewModel = viewModel()){
+    val dataState = viewModel.getCollection("PatternDatabase").observeAsState(initial = null)
+
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     Drawer(navController, drawerState, scope) {
@@ -51,7 +52,7 @@ fun Favorites(navController: NavController, mainViewModel: MainViewModel= viewMo
                                 dataState.value?.getOrNull()?.let { list ->
                                     items(list) { pattern ->
                                         if (pattern != null) {
-                                            PatternCard2(pattern = pattern, navController = navController)
+                                            PatternCard2(pattern, navController)
                                         }
                                     }
                                 }
@@ -61,6 +62,7 @@ fun Favorites(navController: NavController, mainViewModel: MainViewModel= viewMo
                             }// Handle other states...
                         }
                     }
+                    Spacer(modifier = Modifier.height(80.dp))
                 }
             }
         }

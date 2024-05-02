@@ -1,4 +1,4 @@
-package com.example.crochet3
+package com.example.crochet3.tools
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
@@ -15,15 +15,20 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.crochet3.BottomBar
+import com.example.crochet3.Drawer
+import com.example.crochet3.TopAppBar
+import com.example.crochet3.WhiteCard
+import com.example.crochet3.appGradient
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun Projects(navController: NavController) {
+fun UnitConversion (navController: NavController) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     Drawer(navController, drawerState, scope) {
         Scaffold(
-            topBar = { TopAppBar(navController, "My Projects", drawerState, scope) },
+            topBar = { TopAppBar(navController, "Unit Conversion", drawerState, scope) },
             bottomBar = { BottomBar(navController) },
             containerColor = Color.Transparent,
             modifier = Modifier.background(appGradient())
@@ -35,13 +40,11 @@ fun Projects(navController: NavController) {
     }
 }
 
-
-
-
 @Preview
 @Composable
-fun ProjectsPreview() {
+fun UnitConversionPreview () {
     val navController = rememberNavController()
-    Projects(navController)
+    UnitConversion(navController)
 }
+
 

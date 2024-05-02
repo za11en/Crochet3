@@ -84,18 +84,19 @@ fun CategoriesScreen(navController: NavController) {
 
 @Composable
 fun CategoryCard(title: String, navController: NavController, destination: String) {
+    val categoryImage = getCategoryImage(title)
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Card(
             modifier = Modifier
                 .padding(6.dp)
                 .height(160.dp)
-                .width(175.dp)
+                .width(getScreenWidth() /2 )
                 .background(Color.Transparent)
                 .shadow(elevation = 8.dp, shape = RoundedCornerShape(16.dp))
                 .clickable(onClick = { navController.navigate("$destination/$title") })
         ) {
             Image(
-                painter = painterResource(id = R.drawable.a),
+                painter = painterResource(id = categoryImage),
                 contentDescription = "Crochet Image",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
@@ -106,9 +107,24 @@ fun CategoryCard(title: String, navController: NavController, destination: Strin
             textAlign = TextAlign.Center,
             text = title,
             color = AppPrime,
-            fontSize = 22.sp,
+            fontSize = 20.sp,
             fontWeight = FontWeight.Bold
         )
+    }
+}
+fun getCategoryImage(category: String): Int {
+    return when (category) {
+        "Hats" -> R.drawable.cathat
+        "Scarves" -> R.drawable.catscarf
+        "Gloves" -> R.drawable.catgloves
+        "Shawls" -> R.drawable.catshawl
+        "Blankets" -> R.drawable.catblankets
+        "Bags" -> R.drawable.catbag
+        "Amigurumi" -> R.drawable.catami
+        "Socks" -> R.drawable.catsocks
+        "Decor" -> R.drawable.catdecor
+        "Miscellaneous" -> R.drawable.a
+        else -> R.drawable.a
     }
 }
 
